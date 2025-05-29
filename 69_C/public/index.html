@@ -1,0 +1,1503 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "rajgrk6um6");
+</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Resource</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+/* ===== GLOBAL STYLES ===== */
+:root {
+  --primary: #4361ee;
+  --primary-light: #4895ef;
+  --primary-dark: #3f37c9;
+  --secondary: #7209b7;
+  --accent: #f72585;
+  --light: #f8f9fa;
+  --light-gray: #e9ecef;
+  --medium-gray: #adb5bd;
+  --dark: #212529;
+  --success: #4cc9f0;
+  --warning: #f8961e;
+  --danger: #ef233c;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  background: #f8f9fe;
+  color: var(--dark);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== LAYOUT ===== */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: minmax(250px, 300px) 1fr;
+  gap: 25px;
+  padding: 30px;
+  flex: 1;
+  min-height: calc(100vh - 80px);
+}
+
+header {
+  grid-column: 1 / -1;
+  background: white;
+  padding: 25px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at top right, rgba(255,255,255,0.2) 0%, transparent 50%);
+}
+
+h1 {
+  font-weight: 700;
+  margin-bottom: 10px;
+  font-size: clamp(1.8rem, 4vw, 2.2rem);
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 25px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.main-content {
+  display: grid;
+  gap: 25px;
+  align-content: start;
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 25px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-5px);
+}
+
+.section-title {
+  color: var(--primary-dark);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--light-gray);
+  font-size: 1.3rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== RESOURCE/SESSION CARDS ===== */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+ 
+  align-items: start;
+}
+
+.resource-card {
+  border-left: 4px solid var(--primary-light);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px dashed rgb(10, 145, 0);
+}
+
+.session-card {
+  border-left: 4px solid var(--secondary);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.recording-card {
+  border-left: 4px solid var(--accent);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.session-card.expanded {
+  grid-column: 1 / -1;
+}
+
+.session-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+
+.session-card.expanded .session-details {
+  max-height: 500px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--light-gray);
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-file {
+  background: rgba(67, 97, 238, 0.1);
+  color: var(--primary);
+}
+
+.badge-link {
+  background: rgba(114, 9, 183, 0.1);
+  color: var(--secondary);
+}
+
+.badge-session {
+  background: rgba(247, 37, 133, 0.1);
+  color: var(--accent);
+}
+
+.badge-recording {
+  background: rgba(239, 35, 60, 0.1);
+  color: var(--danger);
+}
+
+/* Subject-specific badge colors */
+.badge-math {
+  background: rgba(67, 97, 238, 0.15);
+  color: var(--primary-dark);
+}
+
+.badge-physics {
+  background: rgba(247, 37, 133, 0.15);
+  color: var(--accent);
+}
+
+.badge-chemistry {
+  background: rgba(75, 192, 192, 0.15);
+  color: #2a8f8f;
+}
+
+.badge-english {
+  background: rgba(67, 97, 238, 0.15);
+  color: var(--primary-dark);
+}
+
+.badge-accounting {
+  background: rgba(153, 102, 255, 0.15);
+  color: #7d4dff;
+}
+
+.badge-statistic {
+  background: rgba(247, 37, 133, 0.15);
+  color: var(--accent);
+}
+
+.badge-computer {
+  background: rgba(153, 102, 255, 0.15);
+  color: #7d4dff;
+}
+
+.badge-others {
+  background: rgba(33, 37, 41, 0.15);
+  color: var(--dark);
+}
+
+/* ===== TYPOGRAPHY ===== */
+h2, h3, h4 {
+  margin-bottom: 15px;
+  color: var(--dark);
+}
+
+h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+p {
+  margin-bottom: 10px;
+  color: var(--dark);
+}
+
+.text-muted {
+  color: var(--medium-gray);
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+/* ===== FORMS & INPUTS ===== */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--dark);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--light-gray);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  transition: var(--transition);
+  background-color: white;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:hover {
+  background: rgba(67, 97, 238, 0.1);
+  transform: translateY(-2px);
+}
+
+.btn-sm {
+  padding: 8px 15px;
+  font-size: 0.9rem;
+}
+
+.btn-success {
+  background-color: #0ea63c;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #0d8a33;
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #d90429;
+  transform: translateY(-2px);
+}
+
+/* ===== MODALS ===== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 600px;
+  border-radius: var(--radius);
+  padding: 30px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalFadeIn 0.3s ease;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--medium-gray);
+  transition: var(--transition);
+  z-index: 1;
+}
+
+.close-btn:hover {
+  color: var(--dark);
+  transform: rotate(90deg);
+}
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--light-gray);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  font-weight: 500;
+  color: var(--medium-gray);
+  transition: var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.mb-4 { margin-bottom: 16px; }
+
+.w-full {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.bg-gray-50 {
+  background-color: #f9fafb;
+}
+
+.p-3 {
+  padding: 12px;
+}
+
+.rounded {
+  border-radius: var(--radius-sm);
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.grid {
+  display: grid;
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Video player styles */
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  margin-bottom: 15px;
+  border-radius: var(--radius-sm);
+  background: #000;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Marquee styles */
+marquee {
+  color: white;
+  background-color: var(--danger);
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: var(--radius-sm);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  padding: 30px;
+  background-color: #4b4877;
+  color: white;
+  text-align: center;
+  margin-top: auto;
+  position: relative;
+  z-index: 1;
+}
+
+footer a {
+  color: rgb(120, 255, 120);
+  text-decoration: none;
+  transition: var(--transition);
+  font-weight: 600;
+}
+
+footer a:hover {
+  text-decoration: underline;
+  color: #7dff7d;
+}
+
+/* ===== SEARCH & FILTER STYLES ===== */
+.search-box {
+  display: flex;
+  gap: 10px;
+  position: relative;
+}
+
+#searchInput {
+  flex-grow: 1;
+  padding-right: 40px;
+}
+
+#searchBtn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  margin-bottom: 5px;
+}
+
+.filter-option:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.filter-option input {
+  width: auto;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* Empty state styles */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--medium-gray);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius);
+  grid-column: 1 / -1;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  opacity: 0.3;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+@media (max-width: 1200px) {
+  .container {
+    grid-template-columns: minmax(200px, 250px) 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  .container {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .sidebar {
+    position: static;
+    margin-bottom: 20px;
+  }
+  
+  header {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-content {
+    padding: 25px 20px;
+  }
+  
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .search-box {
+    flex-direction: row;
+  }
+  
+  #searchBtn {
+    position: relative;
+    width: 15%;
+    height: auto;
+    padding: 12px;
+  }
+  
+  #searchInput {
+    padding-right: 15px;
+    width: 80%;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 15px;
+  }
+  
+  .card {
+    padding: 20px;
+  }
+  
+  .section-title {
+    font-size: 1.1rem;
+  }
+  
+  .tab {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+  
+  .btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .empty-state {
+    padding: 30px 15px;
+  }
+  
+  .empty-state i {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .flex.justify-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  #addResourceBtn, #addSessionBtn, #addRecordingBtn {
+    width: 100%;
+  }
+  
+  .modal-content {
+    padding: 20px 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  input, select, textarea {
+    padding: 10px 12px;
+  }
+}
+
+/* Past session styling */
+.past-session {
+    opacity: 0.7;
+    background-color: #f8f9fa;
+    border-left-color: #adb5bd !important;
+}
+
+.past-session h3,
+.past-session p,
+.past-session .text-muted {
+    color: #6c757d !important;
+}
+
+.badge-session-past {
+    background: rgba(108, 117, 125, 0.1) !important;
+    color: #6c757d !important;
+}
+
+.past-session .btn {
+    pointer-events: none;
+    background-color: #e9ecef !important;
+    color: #6c757d !important;
+    border-color: #dee2e6 !important;
+}
+.filter-options {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.filter-options.collapsed {
+  display: none;
+}
+
+#toggleFilters .fa-chevron-down {
+  transition: transform 0.3s ease;
+  
+}
+
+#toggleFilters.collapsed .fa-chevron-down {
+  transform: rotate(-90deg);
+}
+
+/* Exam specific styles */
+.badge-quiz {
+  background: rgba(76, 201, 240, 0.15);
+  color: #4cc9f0;
+}
+
+.badge-mid {
+  background: rgba(248, 150, 30, 0.15);
+  color: #f8961e;
+}
+
+.badge-final {
+  background: rgba(239, 35, 60, 0.15);
+  color: #ef233c;
+}
+
+.badge-assignment {
+  background: rgba(114, 9, 183, 0.15);
+  color: #7209b7;
+}
+
+.badge-presentation {
+  background: rgba(67, 97, 238, 0.15);
+  color: #4361ee;
+}
+
+.badge-exam-other {
+  background: rgba(33, 37, 41, 0.15);
+  color: var(--dark);
+}
+
+.exam-timer {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 15px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.03);
+  margin: 20px 0;
+}
+
+.exam-timer.expired {
+  color: var(--danger);
+  background: rgba(239, 35, 60, 0.1);
+}
+
+.exam-timer-soon {
+  color: var(--warning);
+  background: rgba(248, 150, 30, 0.1);
+}
+
+.exam-details-grid {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.exam-details-grid dt {
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+.exam-details-grid dd {
+  margin: 0;
+}
+#h-a{
+  position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #3498db;
+    color: white;
+    padding: 10px 18px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+  </style>
+</head>
+<body>
+<div class="main">
+  <div class="container">
+           <a href="C:\Users\Dell\OneDrive\69_C\index.html" id="h-a">Admin Panel <i class="fa-solid fa-arrow-right"></i></a><br><br>    <header>
+      <h1><i class="fas fa-users"></i> Resources For 69_C</h1>
+      <p>Share resources, and get access from anywhere.</p>
+    </header>
+
+    <aside class="sidebar">
+      <div class="search-box flex" >
+        <input type="text" id="searchInput" placeholder="Search resources and sessions..." class="flex-grow">
+        <button id="searchBtn" class="btn btn-primary" style="background-color:silver;"><i class="fas fa-search"></i></button>
+      </div><br><br>
+      
+      <div class="filter-section mt-4">
+        <div class="flex justify-between items-center">
+          <h3 class="section-title" style="color: #10752e;"><i class="fas fa-filter"></i> Filters
+          <button id="toggleFilters" class="btn btn-sm btn-outline" style="color: white; background-color: rgb(0, 138, 25); margin-left: 30px;">
+            <i class="fas fa-chevron-down"></i>
+          </button></h3>
+        </div>
+        
+        <div class="filter-options" id="filterOptions">
+          <div class="subject-filters" id="subjectFilters">
+            <div class="filter-options">
+              <label class="filter-option">
+                <input type="radio" name="subjectFilter" value="all" checked="" class="mr-2">
+                <span>All Subjects</span>
+              </label>
+              <label class="filter-option">
+                <input type="radio" name="subjectFilter" value="computer" class="mr-2">
+                <span class="badge badge-computer">CSE</span>
+              </label>
+              <label class="filter-option">
+                <input type="radio" name="subjectFilter" value="math" class="mr-2">
+                <span class="badge badge-math">Mathematics</span>
+              </label>
+              <label class="filter-option">
+                <input type="radio" name="subjectFilter" value="physics" class="mr-2">
+                <span class="badge badge-physics">Physics</span>
+              </label>
+              <label class="filter-option">
+                <input type="radio" name="subjectFilter" value="chemistry" class="mr-2">
+                <span class="badge badge-chemistry">Chemistry</span>
+              </label>
+              <label class="filter-option">
+                <input type="radio" name="subjectFilter" value="english" class="mr-2">
+                <span class="badge badge-english">English</span>
+              </label>
+              <label class="filter-option">
+                <input type="radio" name="subjectFilter" value="accounting" class="mr-2">
+                <span class="badge badge-accounting">Accounting</span>
+              </label>
+              <label class="filter-option">
+                <input type="radio" name="subjectFilter" value="statistic" class="mr-2">
+                <span class="badge badge-statistic">Statistic</span>
+              </label>
+              <label class="filter-option">
+                <input type="radio" name="subjectFilter" value="others" class="mr-2">
+                <span class="badge badge-physics">Others</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="upcoming-sessions mt-4">
+        <h3 class="section-title"><i class="fas fa-calendar-star"></i> Next Session</h3>
+        <div id="nextSession"><div class="card text-center py-4 text-muted">
+        <i class="fas fa-calendar-times fa-2x mb-2"></i>
+        <p>No upcoming sessions</p>
+      </div></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="tabs">
+        <div class="tab active" data-tab="resources">Resources</div>
+        <div class="tab" data-tab="sessions">Study Sessions</div>
+        <div class="tab" data-tab="recordings">Recorded Sessions</div>
+        <div class="tab" data-tab="exams">Upcoming Exams</div>
+      </div>
+      
+      <div class="tab-content active" id="resourcesTab">
+        <div class="card">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="section-title"><i class="fas fa-book-open"></i> Shared Resources</h3>
+           
+          </div>
+          <div class="card-grid" id="resourceList">
+             <p>No resource found</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tab-content" id="sessionsTab">
+        <div class="card">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="section-title"><i class="fas fa-calendar-alt"></i> Upcoming Sessions</h3>
+         
+          </div>
+          <div class="card-grid" id="sessionList">
+            <div class="empty-state">
+              <i class="fas fa-calendar-times"></i>
+              <p>No sessions found</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tab-content" id="recordingsTab">
+        <div class="card">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="section-title"><i class="fas fa-video"></i> Recorded Sessions</h3>
+         
+          </div>
+          <div class="card-grid" id="recordingList">
+            <div class="empty-state">
+              <i class="fas fa-video-slash"></i>
+              <p>No recordings found</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    <div class="tab-content" id="examsTab">
+      <div class="card">
+       <div class="flex justify-between items-center mb-4">
+        <h3 class="section-title"><i class="fas fa-clipboard-list"></i> Upcoming Exams</h3>
+         
+      </div>
+       <div class="card-grid" id="examList">
+        <div class="empty-state">
+          <i class="fas fa-clipboard-question"></i>
+          <p>No exams scheduled yet</p>
+        </div>
+      </div>
+     </div>
+    </div>    
+      
+    </main>
+  </div>
+
+  <!-- Resource Modal -->
+  <div id="resourceModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">×</span>
+      <h2 class="mb-4"><i class="fas fa-share-alt"></i> Share Resource</h2>
+      <form id="resourceForm">
+        <div class="form-group">
+          <label for="resourceType">Resource Type</label>
+          <select id="resourceType" required="">
+            <option value="">Select type</option>
+            <option value="file">File</option>
+            <option value="link">Link</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="fileUploadGroup">
+          <label for="fileUpload">Upload File</label>
+          <input type="file" id="fileUpload">
+          <p class="text-muted mt-2">Files are stored securely on IPFS</p>
+        </div>
+
+        <div class="form-group" id="linkInputGroup" style="display: none;">
+          <label for="resourceLink">Link URL</label>
+          <input type="url" id="resourceLink" placeholder="https://example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="resourceSubject">Subject</label>
+          <select id="resourceSubject" required="">
+            <option value="">Select subject</option>
+            <option value="computer">CSE</option>
+            <option value="math">Mathematics</option>
+            <option value="physics">Physics</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="english">English</option>
+            <option value="accounting">Accounting</option>
+            <option value="statistic">Statistic</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="resourceTopic">Topic (optional)</label>
+          <input type="text" id="resourceTopic" placeholder="E.g., Calculus, Quantum Mechanics">
+        </div>
+
+        <div class="form-group">
+          <label for="resourceDescription">Description</label>
+          <textarea id="resourceDescription" required=""></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="sharedBy">Your Name</label>
+          <input type="text" id="sharedBy" required="">
+        </div>
+
+        <div class="flex justify-end gap-3 mt-4">
+          <button type="button" class="btn btn-outline close-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="resourceSubmitBtn">
+            <span id="resourceSubmitText">Share Resource</span>
+            <span id="resourceSpinner" class="spinner" style="display: none;"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Session Modal -->
+  <div id="sessionModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">×</span>
+      <h2 class="mb-4"><i class="fas fa-calendar-plus"></i> Schedule Session</h2>
+      <form id="sessionForm">
+        <div class="form-group">
+          <label for="sessionTopic">Session Topic</label>
+          <input type="text" id="sessionTopic" required="">
+        </div>
+
+        <div class="form-group">
+          <label for="sessionSubject">Subject</label>
+          <select id="sessionSubject" required="">
+            <option value="">Select subject</option>
+            <option value="computer">CSE</option>
+            <option value="math">Mathematics</option>
+            <option value="physics">Physics</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="english">English</option>
+            <option value="accounting">Accounting</option>
+            <option value="statistic">Statistic</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sessionDate">Date &amp; Time</label>
+          <input type="datetime-local" id="sessionDate" required="">
+        </div>
+
+        <div class="form-group">
+          <label for="zoomLink">Zoom Link (optional)</label>
+          <input type="url" id="zoomLink" placeholder="https://zoom.us/j/123456789">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="form-group">
+            <label for="zoomId">Meeting ID (optional)</label>
+            <input type="text" id="zoomId" placeholder="123 456 7890">
+          </div>
+          <div class="form-group">
+            <label for="zoomPass">Password (optional)</label>
+            <input type="text" id="zoomPass">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="sessionHost">Hosted By</label>
+          <input type="text" id="sessionHost" required="">
+        </div>
+
+        <div class="form-group">
+          <label for="sessionNotes">Notes</label>
+          <textarea id="sessionNotes" placeholder="Agenda, materials needed, etc."></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-4">
+          <button type="button" class="btn btn-outline close-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="sessionSubmitBtn">
+            <span id="sessionSubmitText">Schedule Session</span>
+            <span id="sessionSpinner" class="spinner" style="display: none;"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+   
+  <!-- Recording Modal -->
+  <div id="recordingModal" class="modal">
+    <div class="modal-content">
+      <marquee>Note: You need to upload your video to YouTube first, then paste the URL here</marquee>
+      <span class="close-btn">×</span>
+      <h2 class="mb-4"><i class="fas fa-video"></i> Add Recorded Session</h2>
+      <form id="recordingForm">
+        <div class="form-group">
+          <label for="recordingTitle">Recording Title</label>
+          <input type="text" id="recordingTitle" required="">
+        </div>
+
+        <div class="form-group">
+          <label for="recordingSubject">Subject</label>
+          <select id="recordingSubject" required="">
+            <option value="">Select subject</option>
+            <option value="computer">CSE</option>
+            <option value="math">Mathematics</option>
+            <option value="physics">Physics</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="english">English</option>
+            <option value="accounting">Accounting</option>
+            <option value="statistic">Statistic</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+
+        <div class="form-group"> 
+          <label for="recordingTopic">Topic (optional)</label>
+          <input type="text" id="recordingTopic" placeholder="E.g., Linear Algebra, Thermodynamics">
+        </div>
+
+        <div class="form-group">
+          <label for="youtubeUrl">YouTube Video URL</label>
+          <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." required>
+          <p class="text-muted mt-2">Paste the full YouTube video URL</p>
+        </div>
+
+        <div class="form-group">
+          <label for="recordingDescription">Description</label>
+          <textarea id="recordingDescription" placeholder="What was covered in this session?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="recordedBy">Recorded By</label>
+          <input type="text" id="recordedBy" required="">
+        </div>
+
+        <div class="form-group">
+          <label for="recordingDate">Recording Date</label>
+          <input type="date" id="recordingDate" required="">
+        </div>
+
+        <div class="flex justify-end gap-3 mt-4">
+          <button type="button" class="btn btn-outline close-modal">Cancel</button>
+          <button type="submit" class="btn btn-danger" id="recordingSubmitBtn">
+            <span id="recordingSubmitText">Add Recording</span>
+            <span id="recordingSpinner" class="spinner" style="display: none;"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Exam Modal -->
+ <div id="examModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">×</span>
+    <h2 class="mb-4"><i class="fas fa-clipboard-list"></i> Add Exam</h2>
+    <form id="examForm">
+      <div class="form-group">
+        <label for="examType">Exam Type</label>
+        <select id="examType" required>
+          <option value="">Select type</option>
+          <option value="quiz">Quiz</option>
+          <option value="mid">Midterm</option>
+          <option value="final">Final</option>
+          <option value="assignment">Assignment</option>
+          <option value="presentation">Presentation</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="examSubject">Subject</label>
+        <select id="examSubject" required>
+          <option value="">Select subject</option>
+          <option value="computer">CSE</option>
+          <option value="math">Mathematics</option>
+          <option value="physics">Physics</option>
+          <option value="chemistry">Chemistry</option>
+          <option value="english">English</option>
+          <option value="accounting">Accounting</option>
+          <option value="statistic">Statistic</option>
+          <option value="others">Others</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="examTitle">Exam Title</label>
+        <input type="text" id="examTitle" required>
+      </div>
+
+      <div class="form-group">
+        <label for="examTopics">Topics Covered</label>
+        <textarea id="examTopics" placeholder="List of topics that will be covered in this exam"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="examDate">Date & Time</label>
+        <input type="datetime-local" id="examDate" required>
+      </div>
+
+      <div class="form-group">
+        <label for="examDuration">Duration (optional)</label>
+        <input type="text" id="examDuration" placeholder="E.g., 2 hours, 90 minutes">
+      </div>
+
+      <div class="form-group">
+        <label for="examLocation">Location (optional)</label>
+        <input type="text" id="examLocation" placeholder="Room number or online platform">
+      </div>
+
+      <div class="form-group">
+        <label for="examNotes">Additional Notes</label>
+        <textarea id="examNotes" placeholder="Important details, materials allowed, etc."></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-4">
+        <button type="button" class="btn btn-outline close-modal">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="examSubmitBtn">
+          <span id="examSubmitText">Add Exam</span>
+          <span id="examSpinner" class="spinner" style="display: none;"></span>
+        </button>
+      </div>
+     </form>
+   </div>
+  </div>
+ <!-- Exam Details Modal -->
+<div id="examDetailsModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">×</span>
+    <div id="examDetailsContent">
+      <!-- Content will be dynamically inserted here -->
+    </div>
+  </div>
+</div>
+
+
+</div>    
+  
+  <footer style="margin-top: 100px;">
+    <p style="color: white;">
+     Powered By - <a href="https://nextbyte-it.netlify.app/about#team">NextByte iT</a>
+    </p>
+  </footer>
+
+  <script src="server.js">
+   
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+  // Tab switching function
+  function switchTab(tabId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    
+    // Deactivate all tab buttons
+    document.querySelectorAll('.tab').forEach(tabBtn => {
+      tabBtn.classList.remove('active');
+    });
+    
+    // Activate the target tab
+    const targetTab = document.getElementById(tabId);
+    if (targetTab) {
+      targetTab.classList.add('active');
+      
+      // Activate the corresponding tab button
+      const tabButton = document.querySelector(`.tab[data-tab="${tabId.replace('Tab', '').toLowerCase()}"]`);
+      if (tabButton) tabButton.classList.add('active');
+    }
+  }
+
+  // Check URL hash on page load
+  if (window.location.hash === '#recordingsTab') {
+    switchTab('recordingsTab');
+  }
+
+  // Optional: Also handle the recording modal if URL has both
+  if (window.location.search.includes('showRecordingModal=true')) {
+    document.getElementById('recordingModal').style.display = 'flex';
+  }
+});
+  </script>
+  
+
+
+
+
+  <script>
+    
+// Show exam details function
+function showExamDetails(examId) {
+  const exam = exams.find(e => e.id === examId);
+  if (!exam) return;
+
+  const examDate = new Date(exam.date);
+  const isPast = examDate < new Date();
+  
+  let badgeClass, badgeIcon;
+  switch(exam.type) {
+    case 'quiz':
+      badgeClass = 'badge-quiz';
+      badgeIcon = 'fa-question-circle';
+      break;
+    case 'mid':
+      badgeClass = 'badge-mid';
+      badgeIcon = 'fa-book-open';
+      break;
+    case 'final':
+      badgeClass = 'badge-final';
+      badgeIcon = 'fa-award';
+      break;
+    case 'assignment':
+      badgeClass = 'badge-assignment';
+      badgeIcon = 'fa-tasks';
+      break;
+    case 'presentation':
+      badgeClass = 'badge-presentation';
+      badgeIcon = 'fa-presentation';
+      break;
+    default:
+      badgeClass = 'badge-exam-other';
+      badgeIcon = 'fa-clipboard-list';
+  }
+
+  const detailsContent = `
+    <h2 class="mb-4">
+      <span class="badge ${badgeClass}">
+        <i class="fas ${badgeIcon}"></i> ${capitalize(exam.type)}
+      </span>
+      ${exam.title}
+    </h2>
+    
+    <div class="exam-details-grid">
+      <dt>Subject:</dt>
+      <dd>${capitalize(exam.subject)}</dd>
+      
+      <dt>Date & Time:</dt>
+      <dd>${formatDateTime(exam.date)}</dd>
+      
+      ${exam.duration ? `<dt>Duration:</dt><dd>${exam.duration}</dd>` : ''}
+      ${exam.location ? `<dt>Location:</dt><dd>${exam.location}</dd>` : ''}
+    </div>
+    
+    ${exam.topics ? `
+      <div class="mb-4">
+        <h4 class="font-medium mb-2"><i class="fas fa-bookmark"></i> Topics Covered</h4>
+        <p>${exam.topics.replace(/\n/g, '<br>')}</p>
+      </div>
+    ` : ''}
+    
+    ${!isPast ? `
+      <div class="exam-timer" id="details-timer-${exam.id}">
+        ${getCountdownText(exam.date)}
+      </div>
+    ` : ''}
+    
+    ${exam.notes ? `
+      <div class="bg-gray-50 p-3 rounded">
+        <h4 class="font-medium mb-2"><i class="fas fa-sticky-note"></i> Additional Notes</h4>
+        <p>${exam.notes.replace(/\n/g, '<br>')}</p>
+      </div>
+    ` : ''}
+  `;
+
+  document.getElementById("examDetailsContent").innerHTML = detailsContent;
+  document.getElementById("examDetailsModal").style.display = "flex";
+  
+  if (!isPast) {
+    startCountdownTimer(`details-timer-${exam.id}`, exam.date);
+  }
+}
+
+  </script>
+</body>
+</html>
