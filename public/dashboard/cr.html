@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CR Dashboard - Study Group Platform</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>CR Dashboard</h2>
+                <p id="headerUserName">Loading...</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" data-section="overview">
+                        <a href="#"><i class="fas fa-home"></i> Overview</a>
+                    </li>
+                    <li class="nav-item" data-section="members">
+                        <a href="#"><i class="fas fa-users"></i> Section Members</a>
+                    </li>
+                    <li class="nav-item" data-section="resources">
+                        <a href="#"><i class="fas fa-book"></i> Resources</a>
+                    </li>
+                    <li class="nav-item" data-section="sessions">
+                        <a href="#"><i class="fas fa-calendar"></i> Sessions</a>
+                    </li>
+                    <li class="nav-item" data-section="recordings">
+                        <a href="#"><i class="fas fa-video"></i> Recordings</a>
+                    </li>
+                    <li class="nav-item" data-section="exams">
+                        <a href="#"><i class="fas fa-file-alt"></i> Exams</a>
+                    </li>
+                    <li class="nav-item" data-section="announcements">
+                        <a href="#"><i class="fas fa-bullhorn"></i> Announcements</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Section -->
+            <section id="overview" class="content-section active">
+                <h2>Overview</h2>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Section Members</h3>
+                        <p id="sectionMemberCount">Loading...</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-book"></i>
+                        <h3>Resources</h3>
+                        <p id="resourceCount">Loading...</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-calendar"></i>
+                        <h3>Upcoming Sessions</h3>
+                        <p id="upcomingSessionCount">Loading...</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-video"></i>
+                        <h3>Recordings</h3>
+                        <p id="recordingCount">Loading...</p>
+                    </div>
+                </div>
+                <div class="upcoming-events">
+                    <h3>Upcoming Events</h3>
+                    <div id="upcomingEventsList"></div>
+                </div>
+            </section>
+
+            <!-- Members Section -->
+            <section id="members" class="content-section">
+                <div class="section-header">
+                    <h2>Section Members</h2>
+                </div>
+                <div id="sectionMembers"></div>
+            </section>
+
+            <!-- Resources Section -->
+            <section id="resources" class="content-section">
+                <div class="section-header">
+                    <h2>Resources</h2>
+                    <button class="btn btn-primary" onclick="showModal('resourceModal')">
+                        <i class="fas fa-plus"></i> Add Resource
+                    </button>
+                </div>
+                <div id="resourcesList"></div>
+            </section>
+
+            <!-- Sessions Section -->
+            <section id="sessions" class="content-section">
+                <div class="section-header">
+                    <h2>Study Sessions</h2>
+                    <button class="btn btn-primary" onclick="showModal('sessionModal')">
+                        <i class="fas fa-plus"></i> Add Session
+                    </button>
+                </div>
+                <div id="sessionsList"></div>
+            </section>
+
+            <!-- Recordings Section -->
+            <section id="recordings" class="content-section">
+                <div class="section-header">
+                    <h2>Recordings</h2>
+                    <button class="btn btn-primary" onclick="showModal('recordingModal')">
+                        <i class="fas fa-plus"></i> Add Recording
+                    </button>
+                </div>
+                <div id="recordingsList"></div>
+            </section>
+
+            <!-- Exams Section -->
+            <section id="exams" class="content-section">
+                <div class="section-header">
+                    <h2>Exams</h2>
+                </div>
+                <div id="examsList"></div>
+            </section>
+
+            <!-- Announcements Section -->
+            <section id="announcements" class="content-section">
+                <div class="section-header">
+                    <h2>Announcements</h2>
+                </div>
+                <div id="announcementsList"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Resource Modal -->
+    <div id="resourceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Resource</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="resourceForm">
+                <div class="form-group">
+                    <label for="resourceTitle">Title</label>
+                    <input type="text" id="resourceTitle" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="resourceSubject">Subject</label>
+                    <input type="text" id="resourceSubject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="resourceDescription">Description</label>
+                    <textarea id="resourceDescription" name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="resourceLink">Link</label>
+                    <input type="url" id="resourceLink" name="link" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add Resource</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Session Modal -->
+    <div id="sessionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Session</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="sessionForm">
+                <div class="form-group">
+                    <label for="sessionTitle">Title</label>
+                    <input type="text" id="sessionTitle" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="sessionSubject">Subject</label>
+                    <input type="text" id="sessionSubject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="sessionDate">Date & Time</label>
+                    <input type="datetime-local" id="sessionDate" name="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="sessionDescription">Description</label>
+                    <textarea id="sessionDescription" name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="sessionLink">Meeting Link</label>
+                    <input type="url" id="sessionLink" name="link">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add Session</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Recording Modal -->
+    <div id="recordingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Recording</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="recordingForm">
+                <div class="form-group">
+                    <label for="recordingTitle">Title</label>
+                    <input type="text" id="recordingTitle" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="recordingSubject">Subject</label>
+                    <input type="text" id="recordingSubject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="recordingDescription">Description</label>
+                    <textarea id="recordingDescription" name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="recordingLink">YouTube Link</label>
+                    <input type="url" id="recordingLink" name="videoUrl" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add Recording</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../scripts/utils/validation.js"></script>
+    <script src="../scripts/dashboard/cr.js" type="module"></script>
+</body>
+</html> 

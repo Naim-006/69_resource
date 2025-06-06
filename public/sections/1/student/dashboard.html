@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Section 1</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../styles/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-graduation-cap"></i> Section 1</h2>
+                <p class="user-role">Student Dashboard</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="#resources"><i class="fas fa-book"></i> Resources</a>
+                    </li>
+                    <li>
+                        <a href="#sessions"><i class="fas fa-calendar-alt"></i> Study Sessions</a>
+                    </li>
+                    <li>
+                        <a href="#recordings"><i class="fas fa-video"></i> Recordings</a>
+                    </li>
+                    <li>
+                        <a href="#exams"><i class="fas fa-clipboard-list"></i> Exams</a>
+                    </li>
+                    <li>
+                        <a href="#announcements"><i class="fas fa-bullhorn"></i> Announcements</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <div class="header-left">
+                    <h1>Welcome, <span id="userName">Student</span></h1>
+                    <p class="text-muted">Section 1 Student Dashboard</p>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <img src="../../../assets/images/default-avatar.png" alt="User Avatar" class="avatar">
+                        <div class="user-details">
+                            <span class="user-name" id="headerUserName">Student Name</span>
+                            <span class="user-email" id="userEmail">student@example.com</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Resources Section -->
+            <section id="resources" class="content-section active">
+                <div class="section-header">
+                    <h2><i class="fas fa-book"></i> Study Resources</h2>
+                    <div class="section-filters">
+                        <select id="resourceSubject">
+                            <option value="all">All Subjects</option>
+                            <option value="computer">CSE</option>
+                            <option value="math">Mathematics</option>
+                            <option value="physics">Physics</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="english">English</option>
+                            <option value="accounting">Accounting</option>
+                            <option value="statistic">Statistic</option>
+                        </select>
+                        <input type="text" id="resourceSearch" placeholder="Search resources...">
+                    </div>
+                </div>
+
+                <div class="resources-grid" id="resourcesGrid">
+                    <!-- Resources will be dynamically added here -->
+                </div>
+            </section>
+
+            <!-- Study Sessions Section -->
+            <section id="sessions" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-calendar-alt"></i> Study Sessions</h2>
+                    <div class="section-filters">
+                        <select id="sessionSubject">
+                            <option value="all">All Subjects</option>
+                            <option value="computer">CSE</option>
+                            <option value="math">Mathematics</option>
+                            <option value="physics">Physics</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="english">English</option>
+                            <option value="accounting">Accounting</option>
+                            <option value="statistic">Statistic</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="sessions-list" id="sessionsList">
+                    <!-- Sessions will be dynamically added here -->
+                </div>
+            </section>
+
+            <!-- Recordings Section -->
+            <section id="recordings" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-video"></i> Recorded Sessions</h2>
+                    <div class="section-filters">
+                        <select id="recordingSubject">
+                            <option value="all">All Subjects</option>
+                            <option value="computer">CSE</option>
+                            <option value="math">Mathematics</option>
+                            <option value="physics">Physics</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="english">English</option>
+                            <option value="accounting">Accounting</option>
+                            <option value="statistic">Statistic</option>
+                        </select>
+                        <input type="text" id="recordingSearch" placeholder="Search recordings...">
+                    </div>
+                </div>
+
+                <div class="recordings-grid" id="recordingsGrid">
+                    <!-- Recordings will be dynamically added here -->
+                </div>
+            </section>
+
+            <!-- Exams Section -->
+            <section id="exams" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-clipboard-list"></i> Upcoming Exams</h2>
+                    <div class="section-filters">
+                        <select id="examSubject">
+                            <option value="all">All Subjects</option>
+                            <option value="computer">CSE</option>
+                            <option value="math">Mathematics</option>
+                            <option value="physics">Physics</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="english">English</option>
+                            <option value="accounting">Accounting</option>
+                            <option value="statistic">Statistic</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="exams-list" id="examsList">
+                    <!-- Exams will be dynamically added here -->
+                </div>
+            </section>
+
+            <!-- Announcements Section -->
+            <section id="announcements" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-bullhorn"></i> Announcements</h2>
+                </div>
+
+                <div class="announcements-list" id="announcementsList">
+                    <!-- Announcements will be dynamically added here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../../scripts/dashboard/student.js"></script>
+</body>
+</html> 

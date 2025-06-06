@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Study Resource</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Create Account</h1>
+                <p>Join our study community</p>
+            </div>
+
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required minlength="8">
+                    <p class="text-muted">Password must be at least 8 characters long</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" required>
+                        <option value="">Select Role</option>
+                        <option value="student">Student</option>
+                        <option value="cr">Class Representative</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="sectionGroup" style="display: none;">
+                    <label for="section">Section</label>
+                    <select id="section" name="section">
+                        <option value="">Select Section</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="studentIdGroup" style="display: none;">
+                    <label for="studentId">Student ID</label>
+                    <input type="text" id="studentId" name="studentId">
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <span id="registerSubmitText">Register</span>
+                    <span id="registerSpinner" class="spinner" style="display: none;"></span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="login.html">Login here</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../scripts/auth/register.js"></script>
+</body>
+</html> 

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Study Resource</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../../../styles/dashboard.css">
+  <link rel="stylesheet" href="../../../styles/admin.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2><i class="fas fa-user-shield"></i> Admin Dashboard</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-section="sections">
+          <i class="fas fa-layer-group"></i> Sections Overview
+        </a>
+        <a href="#" class="nav-item" data-section="cr-requests">
+          <i class="fas fa-user-clock"></i> CR Requests
+          <span class="notification-badge" id="crRequestCount">0</span>
+        </a>
+        <a href="#" class="nav-item" data-section="student-requests">
+          <i class="fas fa-user-graduate"></i> Student Requests
+          <span class="notification-badge" id="studentRequestCount">0</span>
+        </a>
+        <a href="#" class="nav-item" data-section="resources">
+          <i class="fas fa-book"></i> Resources
+        </a>
+        <a href="#" class="nav-item" data-section="sessions">
+          <i class="fas fa-calendar"></i> Study Sessions
+        </a>
+        <a href="#" class="nav-item" data-section="recordings">
+          <i class="fas fa-video"></i> Recordings
+        </a>
+        <a href="#" class="nav-item" data-section="exams">
+          <i class="fas fa-clipboard-list"></i> Exams
+        </a>
+        <a href="#" class="nav-item" data-section="announcements">
+          <i class="fas fa-bullhorn"></i> Announcements
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="logoutBtn" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Welcome, <span id="adminName">Admin</span></h1>
+      </header>
+
+      <!-- Sections Overview -->
+      <section id="sections" class="content-section active">
+        <div class="card">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="section-title">
+              <i class="fas fa-layer-group"></i> Sections Overview
+            </h3>
+            <button id="addSectionBtn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Section
+            </button>
+          </div>
+          <div class="sections-grid" id="sectionsList">
+            <!-- Sections will be loaded here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- CR Requests Section -->
+      <section id="cr-requests" class="content-section">
+        <div class="card">
+          <h3 class="section-title">
+            <i class="fas fa-user-clock"></i> CR Requests
+          </h3>
+          <div class="requests-filters">
+            <select id="crRequestFilter" class="form-control">
+              <option value="all">All Requests</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="card-grid" id="crRequestsList">
+            <!-- CR requests will be loaded here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Student Requests Section -->
+      <section id="student-requests" class="content-section">
+        <div class="card">
+          <h3 class="section-title">
+            <i class="fas fa-user-graduate"></i> Student Requests
+          </h3>
+          <div class="requests-filters">
+            <select id="studentRequestFilter" class="form-control">
+              <option value="all">All Requests</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="card-grid" id="studentRequestsList">
+            <!-- Student requests will be loaded here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Resources Section -->
+      <section id="resources" class="content-section">
+        <div class="card">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="section-title">
+              <i class="fas fa-book"></i> Resources
+            </h3>
+            <button id="addResourceBtn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Resource
+            </button>
+          </div>
+          <div class="section-filter">
+            <select id="resourceSectionFilter" class="form-control">
+              <option value="all">All Sections</option>
+              <!-- Section options will be loaded here -->
+            </select>
+          </div>
+          <div class="card-grid" id="resourceList">
+            <!-- Resources will be loaded here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Study Sessions Section -->
+      <section id="sessions" class="content-section">
+        <div class="card">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="section-title">
+              <i class="fas fa-calendar"></i> Study Sessions
+            </h3>
+            <button id="addSessionBtn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Schedule Session
+            </button>
+          </div>
+          <div class="section-filter">
+            <select id="sessionSectionFilter" class="form-control">
+              <option value="all">All Sections</option>
+              <!-- Section options will be loaded here -->
+            </select>
+          </div>
+          <div class="card-grid" id="sessionList">
+            <!-- Sessions will be loaded here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Recordings Section -->
+      <section id="recordings" class="content-section">
+        <div class="card">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="section-title">
+              <i class="fas fa-video"></i> Recorded Sessions
+            </h3>
+            <button id="addRecordingBtn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Recording
+            </button>
+          </div>
+          <div class="section-filter">
+            <select id="recordingSectionFilter" class="form-control">
+              <option value="all">All Sections</option>
+              <!-- Section options will be loaded here -->
+            </select>
+          </div>
+          <div class="card-grid" id="recordingList">
+            <!-- Recordings will be loaded here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Exams Section -->
+      <section id="exams" class="content-section">
+        <div class="card">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="section-title">
+              <i class="fas fa-clipboard-list"></i> Exams
+            </h3>
+            <button id="addExamBtn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Exam
+            </button>
+          </div>
+          <div class="section-filter">
+            <select id="examSectionFilter" class="form-control">
+              <option value="all">All Sections</option>
+              <!-- Section options will be loaded here -->
+            </select>
+          </div>
+          <div class="card-grid" id="examList">
+            <!-- Exams will be loaded here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Announcements Section -->
+      <section id="announcements" class="content-section">
+        <div class="card">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="section-title">
+              <i class="fas fa-bullhorn"></i> Announcements
+            </h3>
+            <button id="addAnnouncementBtn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Announcement
+            </button>
+          </div>
+          <div class="section-filter">
+            <select id="announcementSectionFilter" class="form-control">
+              <option value="all">All Sections</option>
+              <!-- Section options will be loaded here -->
+            </select>
+          </div>
+          <div class="card-grid" id="announcementList">
+            <!-- Announcements will be loaded here -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add Section Modal -->
+  <div id="sectionModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2><i class="fas fa-layer-group"></i> Add Section</h2>
+      <form id="sectionForm">
+        <div class="form-group">
+          <label for="sectionNumber">Section Number</label>
+          <input type="number" id="sectionNumber" required>
+        </div>
+        <div class="form-group">
+          <label for="sectionCapacity">Capacity</label>
+          <input type="number" id="sectionCapacity" required>
+        </div>
+        <div class="form-group">
+          <label for="sectionDescription">Description</label>
+          <textarea id="sectionDescription" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Add Section</button>
+          <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Resource Modal -->
+  <div id="resourceModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2><i class="fas fa-book"></i> Add Resource</h2>
+      <form id="resourceForm">
+        <div class="form-group">
+          <label for="resourceTitle">Title</label>
+          <input type="text" id="resourceTitle" required>
+        </div>
+        <div class="form-group">
+          <label for="resourceSection">Section</label>
+          <select id="resourceSection" required>
+            <option value="">Select Section</option>
+            <!-- Section options will be loaded here -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="resourceSubject">Subject</label>
+          <select id="resourceSubject" required>
+            <option value="">Select Subject</option>
+            <option value="computer">CSE</option>
+            <option value="math">Mathematics</option>
+            <option value="physics">Physics</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="english">English</option>
+            <option value="accounting">Accounting</option>
+            <option value="statistic">Statistic</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="resourceDescription">Description</label>
+          <textarea id="resourceDescription" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="resourceLink">Resource Link</label>
+          <input type="url" id="resourceLink" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Add Resource</button>
+          <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Session Modal -->
+  <div id="sessionModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2><i class="fas fa-calendar"></i> Add Study Session</h2>
+      <form id="sessionForm">
+        <div class="form-group">
+          <label for="sessionTitle">Title</label>
+          <input type="text" id="sessionTitle" required>
+        </div>
+        <div class="form-group">
+          <label for="sessionSection">Section</label>
+          <select id="sessionSection" required>
+            <option value="">Select Section</option>
+            <!-- Section options will be loaded here -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="sessionSubject">Subject</label>
+          <select id="sessionSubject" required>
+            <option value="">Select Subject</option>
+            <option value="computer">CSE</option>
+            <option value="math">Mathematics</option>
+            <option value="physics">Physics</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="english">English</option>
+            <option value="accounting">Accounting</option>
+            <option value="statistic">Statistic</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="sessionDate">Date and Time</label>
+          <input type="datetime-local" id="sessionDate" required>
+        </div>
+        <div class="form-group">
+          <label for="sessionDescription">Description</label>
+          <textarea id="sessionDescription" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="sessionLink">Meeting Link (Optional)</label>
+          <input type="url" id="sessionLink">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Add Session</button>
+          <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Recording Modal -->
+  <div id="recordingModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2><i class="fas fa-video"></i> Add Recording</h2>
+      <form id="recordingForm">
+        <div class="form-group">
+          <label for="recordingTitle">Title</label>
+          <input type="text" id="recordingTitle" required>
+        </div>
+        <div class="form-group">
+          <label for="recordingSection">Section</label>
+          <select id="recordingSection" required>
+            <option value="">Select Section</option>
+            <!-- Section options will be loaded here -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="recordingSubject">Subject</label>
+          <select id="recordingSubject" required>
+            <option value="">Select Subject</option>
+            <option value="computer">CSE</option>
+            <option value="math">Mathematics</option>
+            <option value="physics">Physics</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="english">English</option>
+            <option value="accounting">Accounting</option>
+            <option value="statistic">Statistic</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="recordingDescription">Description</label>
+          <textarea id="recordingDescription" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="recordingLink">YouTube Link</label>
+          <input type="url" id="recordingLink" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Add Recording</button>
+          <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../../../scripts/dashboard/admin.js"></script>
+</body>
+</html> 
