@@ -117,4 +117,110 @@ export async function validateLoginForm(form) {
         isValid: errors.length === 0,
         errors
     };
+}
+
+// Validation utility functions
+
+// Validate email format
+export function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+// Validate password strength
+export function validatePassword(password) {
+    // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
+    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    return re.test(password);
+}
+
+// Validate URL format
+export function validateURL(url) {
+    try {
+        new URL(url);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+// Validate required fields
+export function validateRequired(value) {
+    return value !== null && value !== undefined && value.trim() !== '';
+}
+
+// Validate date format
+export function validateDate(date) {
+    const d = new Date(date);
+    return d instanceof Date && !isNaN(d);
+}
+
+// Validate number range
+export function validateNumberRange(value, min, max) {
+    const num = Number(value);
+    return !isNaN(num) && num >= min && num <= max;
+}
+
+// Validate form data
+export function validateForm(formData, rules) {
+    const errors = {};
+    
+    for (const [field, rule] of Object.entries(rules)) {
+        const value = formData[field];
+        
+        if (rule.required && !validateRequired(value)) {
+            errors[field] = 'This field is required';
+            continue;
+        }
+        
+        if (value && rule.email && !validateEmail(value)) {
+            errors[field] = 'Invalid email format';
+        }
+        
+        if (value && rule.password && !validatePassword(value)) {
+            errors[field] = 'Password must be at least 8 characters with 1 uppercase, 1 lowercase, and 1 number';
+        }
+        
+        if (value && rule.url && !validateURL(value)) {
+            errors[field] = 'Invalid URL format';
+        }
+        
+        if (value && rule.date && !validateDate(value)) {
+            errors[field] = 'Invalid date format';
+        }
+        
+        if (value && rule.range && !validateNumberRange(value, rule.range.min, rule.range.max)) {
+            errors[field] = `Value must be between ${rule.range.min} and ${rule.range.max}`;
+        }
+    }
+    
+    return {
+        isValid: Object.keys(errors).length === 0,
+        errors
+    };
+}
+
+// Show validation errors in UI
+export function showValidationErrors(errors, formElement) {
+    // Clear previous errors
+    formElement.querySelectorAll('.error-message').forEach(el => el.remove());
+    formElement.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+    
+    // Show new errors
+    for (const [field, message] of Object.entries(errors)) {
+        const input = formElement.querySelector(`[name="${field}"]`);
+        if (input) {
+            input.classList.add('error');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            input.parentNode.appendChild(errorDiv);
+        }
+    }
+}
+
+// Clear validation errors
+export function clearValidationErrors(formElement) {
+    formElement.querySelectorAll('.error-message').forEach(el => el.remove());
+    formElement.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
 } 

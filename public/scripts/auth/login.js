@@ -68,19 +68,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Invalid email or password');
             }
 
-            // Store current user
-            localStorage.setItem('currentUser', JSON.stringify(user));
+            // Store current user with all necessary data
+            const currentUser = {
+                id: user.id,
+                fullName: user.fullName,
+                email: user.email,
+                role: user.role,
+                section: user.section,
+                studentId: user.studentId,
+                createdAt: user.createdAt
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
             // Redirect based on role
             switch (user.role) {
                 case 'admin':
-                    window.location.href = '../sections/1/admin/dashboard.html';
+                    window.location.href = '../dashboard/admin.html';
                     break;
                 case 'cr':
-                    window.location.href = `../sections/${user.section}/cr/dashboard.html`;
+                    window.location.href = '../dashboard/cr.html';
                     break;
                 case 'student':
-                    window.location.href = `../sections/${user.section}/student/dashboard.html`;
+                    window.location.href = '../dashboard/student.html';
                     break;
                 default:
                     throw new Error('Invalid user role');

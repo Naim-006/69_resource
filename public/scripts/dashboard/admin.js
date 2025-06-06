@@ -1,7 +1,10 @@
 import { 
     validateRegistrationForm, 
     setupStudentIdAutoFill, 
-    validateLoginForm 
+    validateLoginForm,
+    validateForm,
+    showValidationErrors,
+    clearValidationErrors
 } from '../utils/validation.js';
 
 // Initialize the dashboard
@@ -23,14 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initializeDashboard() {
     // Load initial data
-    loadSections();
-    loadResources();
-    loadSessions();
-    loadRecordings();
-    loadExams();
-    loadAnnouncements();
-    loadUsers();
-    updateDashboardStats();
+    loadDashboardData();
 }
 
 function setupEventListeners() {
@@ -721,4 +717,81 @@ function showError(message) {
 function handleLogout() {
     localStorage.removeItem('currentUser');
     window.location.href = '../auth/login.html';
-} 
+}
+
+// Load dashboard data
+async function loadDashboardData() {
+    try {
+        // Load overview stats
+        await loadOverviewStats();
+        
+        // Load sections
+        await loadSections();
+        
+        // Load resources
+        await loadResources();
+        
+        // Load sessions
+        await loadSessions();
+        
+        // Load recordings
+        await loadRecordings();
+        
+        // Load exams
+        await loadExams();
+        
+        // Load announcements
+        await loadAnnouncements();
+        
+        // Load users
+        await loadUsers();
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        showNotification('Error loading dashboard data', 'error');
+    }
+}
+
+// Load overview stats
+async function loadOverviewStats() {
+    try {
+        // Simulate API call
+        const stats = {
+            totalStudents: 150,
+            totalCRs: 5,
+            totalResources: 45,
+            upcomingSessions: 3
+        };
+
+        // Update UI
+        document.getElementById('totalStudents').textContent = stats.totalStudents;
+        document.getElementById('totalCRs').textContent = stats.totalCRs;
+        document.getElementById('totalResources').textContent = stats.totalResources;
+        document.getElementById('upcomingSessions').textContent = stats.upcomingSessions;
+    } catch (error) {
+        console.error('Error loading overview stats:', error);
+        showNotification('Error loading overview stats', 'error');
+    }
+}
+
+// Show notification
+function showNotification(message, type = 'success') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+
+    // Add to document
+    document.body.appendChild(notification);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Export functions for use in other modules
+export {
+    showModal,
+    showNotification,
+    loadDashboardData
+}; 
