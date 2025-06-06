@@ -13,40 +13,47 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>Admin Dashboard</h2>
-                <p id="adminName">Loading...</p>
+                <h2>Admin Panel</h2>
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li class="nav-item active" data-section="overview">
-                        <a href="#"><i class="fas fa-home"></i> Overview</a>
+                    <li>
+                        <a href="#" class="nav-item active" data-section="overview">
+                            <i class="fas fa-home"></i>
+                            <span>Overview</span>
+                        </a>
                     </li>
-                    <li class="nav-item" data-section="sections">
-                        <a href="#"><i class="fas fa-users"></i> Sections</a>
+                    <li>
+                        <a href="#" class="nav-item" data-section="approvals">
+                            <i class="fas fa-user-check"></i>
+                            <span>Approvals</span>
+                            <span class="badge" id="approvalBadge">0</span>
+                        </a>
                     </li>
-                    <li class="nav-item" data-section="resources">
-                        <a href="#"><i class="fas fa-book"></i> Resources</a>
+                    <li>
+                        <a href="#" class="nav-item" data-section="users">
+                            <i class="fas fa-users"></i>
+                            <span>Users</span>
+                        </a>
                     </li>
-                    <li class="nav-item" data-section="sessions">
-                        <a href="#"><i class="fas fa-calendar"></i> Sessions</a>
+                    <li>
+                        <a href="#" class="nav-item" data-section="sections">
+                            <i class="fas fa-chalkboard"></i>
+                            <span>Sections</span>
+                        </a>
                     </li>
-                    <li class="nav-item" data-section="recordings">
-                        <a href="#"><i class="fas fa-video"></i> Recordings</a>
-                    </li>
-                    <li class="nav-item" data-section="exams">
-                        <a href="#"><i class="fas fa-file-alt"></i> Exams</a>
-                    </li>
-                    <li class="nav-item" data-section="announcements">
-                        <a href="#"><i class="fas fa-bullhorn"></i> Announcements</a>
-                    </li>
-                    <li class="nav-item" data-section="users">
-                        <a href="#"><i class="fas fa-user-cog"></i> Users</a>
+                    <li>
+                        <a href="#" class="nav-item" data-section="settings">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
                     </li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
                 <button id="logoutBtn" class="btn btn-danger">
-                    <i class="fas fa-sign-out-alt"></i> Logout
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
                 </button>
             </div>
         </aside>
@@ -54,371 +61,243 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Overview Section -->
-            <section id="overview" class="content-section active">
-                <h2>Overview</h2>
-                <div class="dashboard-stats">
+            <section id="overview" class="dashboard-section active">
+                <div class="section-header">
+                    <h2>Overview</h2>
+                </div>
+                <div class="stats-grid">
                     <div class="stat-card">
                         <i class="fas fa-users"></i>
-                        <h3>Total Students</h3>
-                        <p id="totalStudents">Loading...</p>
+                        <div class="stat-info">
+                            <h3>Total Users</h3>
+                            <p id="totalUsers">0</p>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <i class="fas fa-user-tie"></i>
-                        <h3>Total CRs</h3>
-                        <p id="totalCRs">Loading...</p>
+                        <i class="fas fa-user-check"></i>
+                        <div class="stat-info">
+                            <h3>Pending Approvals</h3>
+                            <p id="pendingApprovals">0</p>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <i class="fas fa-book"></i>
-                        <h3>Total Resources</h3>
-                        <p id="totalResources">Loading...</p>
+                        <i class="fas fa-chalkboard"></i>
+                        <div class="stat-info">
+                            <h3>Active Sections</h3>
+                            <p id="activeSections">0</p>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <i class="fas fa-calendar"></i>
-                        <h3>Upcoming Sessions</h3>
-                        <p id="upcomingSessions">Loading...</p>
+                        <i class="fas fa-user-graduate"></i>
+                        <div class="stat-info">
+                            <h3>Active Students</h3>
+                            <p id="activeStudents">0</p>
+                        </div>
                     </div>
                 </div>
-                <div class="pending-registrations">
-                    <h3>Pending Registrations</h3>
-                    <div id="pendingRegistrationsList"></div>
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <div id="recentActivityList" class="activity-list">
+                        <!-- Recent activity will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Approvals Section -->
+            <section id="approvals" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Pending Approvals</h2>
+                    <div class="section-actions">
+                        <div class="search-box">
+                            <input type="text" id="approvalSearch" placeholder="Search approvals...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <select id="approvalFilter">
+                            <option value="all">All Roles</option>
+                            <option value="cr">CR</option>
+                            <option value="co-cr">Co-CR</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="approvals-list" id="approvalsList">
+                    <!-- Approvals will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="dashboard-section">
+                <div class="section-header">
+                    <h2>User Management</h2>
+                    <div class="section-actions">
+                        <div class="search-box">
+                            <input type="text" id="userSearch" placeholder="Search users...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <select id="userFilter">
+                            <option value="all">All Roles</option>
+                            <option value="student">Students</option>
+                            <option value="cr">CRs</option>
+                            <option value="co-cr">Co-CRs</option>
+                        </select>
+                        <button id="addUserBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add User
+                        </button>
+                    </div>
+                </div>
+                <div class="users-list" id="usersList">
+                    <!-- Users will be loaded here -->
                 </div>
             </section>
 
             <!-- Sections Section -->
-            <section id="sections" class="content-section">
+            <section id="sections" class="dashboard-section">
                 <div class="section-header">
-                    <h2>Sections</h2>
-                    <button class="btn btn-primary" onclick="showModal('sectionModal')">
-                        <i class="fas fa-plus"></i> Add Section
-                    </button>
+                    <h2>Section Management</h2>
+                    <div class="section-actions">
+                        <button id="addSectionBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Section
+                        </button>
+                    </div>
                 </div>
-                <div id="sectionsList"></div>
+                <div class="sections-grid" id="sectionsList">
+                    <!-- Sections will be loaded here -->
+                </div>
             </section>
 
-            <!-- Resources Section -->
-            <section id="resources" class="content-section">
+            <!-- Settings Section -->
+            <section id="settings" class="dashboard-section">
                 <div class="section-header">
-                    <h2>Resources</h2>
-                    <button id="addResourceBtn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Resource
-                    </button>
+                    <h2>Settings</h2>
                 </div>
-                <div class="filter-bar">
-                    <select id="resourceFilter" class="form-control">
-                        <option value="all">All Resources</option>
-                    </select>
+                <div class="settings-content">
+                    <div class="settings-card">
+                        <h3>Platform Settings</h3>
+                        <form id="platformSettingsForm">
+                            <div class="form-group">
+                                <label for="platformName">Platform Name</label>
+                                <input type="text" id="platformName" name="platformName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="maxFileSize">Maximum File Size (MB)</label>
+                                <input type="number" id="maxFileSize" name="maxFileSize" min="1" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="allowedFileTypes">Allowed File Types</label>
+                                <input type="text" id="allowedFileTypes" name="allowedFileTypes" placeholder="pdf,doc,docx,ppt,pptx" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </form>
+                    </div>
                 </div>
-                <div id="resourceList"></div>
-            </section>
-
-            <!-- Sessions Section -->
-            <section id="sessions" class="content-section">
-                <div class="section-header">
-                    <h2>Study Sessions</h2>
-                    <button id="addSessionBtn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Session
-                    </button>
-                </div>
-                <div class="filter-bar">
-                    <select id="sessionFilter" class="form-control">
-                        <option value="all">All Sessions</option>
-                    </select>
-                </div>
-                <div id="sessionList"></div>
-            </section>
-
-            <!-- Recordings Section -->
-            <section id="recordings" class="content-section">
-                <div class="section-header">
-                    <h2>Recordings</h2>
-                    <button id="addRecordingBtn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Recording
-                    </button>
-                </div>
-                <div class="filter-bar">
-                    <select id="recordingFilter" class="form-control">
-                        <option value="all">All Recordings</option>
-                    </select>
-                </div>
-                <div id="recordingList"></div>
-            </section>
-
-            <!-- Exams Section -->
-            <section id="exams" class="content-section">
-                <div class="section-header">
-                    <h2>Exams</h2>
-                    <button id="addExamBtn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Exam
-                    </button>
-                </div>
-                <div class="filter-bar">
-                    <select id="examFilter" class="form-control">
-                        <option value="all">All Exams</option>
-                    </select>
-                </div>
-                <div id="examList"></div>
-            </section>
-
-            <!-- Announcements Section -->
-            <section id="announcements" class="content-section">
-                <div class="section-header">
-                    <h2>Announcements</h2>
-                    <button id="addAnnouncementBtn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Announcement
-                    </button>
-                </div>
-                <div id="announcementList"></div>
-            </section>
-
-            <!-- Users Section -->
-            <section id="users" class="content-section">
-                <div class="section-header">
-                    <h2>Users</h2>
-                    <button id="addUserBtn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add User
-                    </button>
-                </div>
-                <div class="filter-bar">
-                    <select id="userFilter" class="form-control">
-                        <option value="all">All Users</option>
-                        <option value="student">Students</option>
-                        <option value="cr">CRs</option>
-                    </select>
-                </div>
-                <div id="userList"></div>
             </section>
         </main>
     </div>
 
-    <!-- Modals -->
-    <!-- Section Modal -->
-    <div id="sectionModal" class="modal">
+    <!-- Approval Modal -->
+    <div id="approvalModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Add Section</h3>
-                <button class="close-btn">&times;</button>
+                <h3>Review Approval Request</h3>
+                <button class="close-modal">&times;</button>
             </div>
-            <form id="sectionForm">
-                <div class="form-group">
-                    <label for="sectionNumber">Section Number</label>
-                    <input type="number" id="sectionNumber" name="sectionNumber" required>
+            <div class="modal-body">
+                <div class="approval-details">
+                    <p><strong>Name:</strong> <span id="approvalName"></span></p>
+                    <p><strong>Email:</strong> <span id="approvalEmail"></span></p>
+                    <p><strong>Student ID:</strong> <span id="approvalStudentId"></span></p>
+                    <p><strong>Role:</strong> <span id="approvalRole"></span></p>
+                    <p><strong>Section:</strong> <span id="approvalSection"></span></p>
+                    <p><strong>Requested On:</strong> <span id="approvalDate"></span></p>
                 </div>
-                <div class="form-group">
-                    <label for="sectionCapacity">Capacity</label>
-                    <input type="number" id="sectionCapacity" name="sectionCapacity" required>
+                <div class="approval-actions">
+                    <button class="btn btn-success" id="approveBtn">
+                        <i class="fas fa-check"></i>
+                        Approve
+                    </button>
+                    <button class="btn btn-danger" id="rejectBtn">
+                        <i class="fas fa-times"></i>
+                        Reject
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label for="sectionDescription">Description</label>
-                    <textarea id="sectionDescription" name="sectionDescription" required></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Add Section</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 
-    <!-- Resource Modal -->
-    <div id="resourceModal" class="modal">
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Add Resource</h3>
-                <button class="close-btn">&times;</button>
+                <h3>Add New User</h3>
+                <button class="close-modal">&times;</button>
             </div>
-            <form id="resourceForm">
-                <div class="form-group">
-                    <label for="resourceTitle">Title</label>
-                    <input type="text" id="resourceTitle" name="title" required>
-                </div>
-                <div class="form-group">
-                    <label for="resourceSubject">Subject</label>
-                    <input type="text" id="resourceSubject" name="subject" required>
-                </div>
-                <div class="form-group">
-                    <label for="resourceDescription">Description</label>
-                    <textarea id="resourceDescription" name="description" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="resourceLink">Link</label>
-                    <input type="url" id="resourceLink" name="link" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Add Resource</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="form-group">
+                        <label for="newUserEmail">Email</label>
+                        <input type="email" id="newUserEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newUserFullName">Full Name</label>
+                        <input type="text" id="newUserFullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newUserStudentId">Student ID</label>
+                        <input type="text" id="newUserStudentId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newUserRole">Role</label>
+                        <select id="newUserRole" required>
+                            <option value="student">Student</option>
+                            <option value="cr">CR</option>
+                            <option value="co-cr">Co-CR</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newUserSection">Section</label>
+                        <select id="newUserSection" required>
+                            <!-- Sections will be loaded here -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newUserPassword">Password</label>
+                        <input type="password" id="newUserPassword" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Add User</button>
+                        <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- Session Modal -->
-    <div id="sessionModal" class="modal">
+    <!-- Add Section Modal -->
+    <div id="addSectionModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Add Session</h3>
-                <button class="close-btn">&times;</button>
+                <h3>Add New Section</h3>
+                <button class="close-modal">&times;</button>
             </div>
-            <form id="sessionForm">
-                <div class="form-group">
-                    <label for="sessionTitle">Title</label>
-                    <input type="text" id="sessionTitle" name="title" required>
-                </div>
-                <div class="form-group">
-                    <label for="sessionSubject">Subject</label>
-                    <input type="text" id="sessionSubject" name="subject" required>
-                </div>
-                <div class="form-group">
-                    <label for="sessionDate">Date & Time</label>
-                    <input type="datetime-local" id="sessionDate" name="date" required>
-                </div>
-                <div class="form-group">
-                    <label for="sessionDescription">Description</label>
-                    <textarea id="sessionDescription" name="description" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="sessionLink">Meeting Link</label>
-                    <input type="url" id="sessionLink" name="link">
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Add Session</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="addSectionForm">
+                    <div class="form-group">
+                        <label for="newSectionName">Section Name</label>
+                        <input type="text" id="newSectionName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newSectionDescription">Description</label>
+                        <textarea id="newSectionDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Add Section</button>
+                        <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- Recording Modal -->
-    <div id="recordingModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add Recording</h3>
-                <button class="close-btn">&times;</button>
-            </div>
-            <form id="recordingForm">
-                <div class="form-group">
-                    <label for="recordingTitle">Title</label>
-                    <input type="text" id="recordingTitle" name="title" required>
-                </div>
-                <div class="form-group">
-                    <label for="recordingSubject">Subject</label>
-                    <input type="text" id="recordingSubject" name="subject" required>
-                </div>
-                <div class="form-group">
-                    <label for="recordingDescription">Description</label>
-                    <textarea id="recordingDescription" name="description" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="recordingLink">YouTube Link</label>
-                    <input type="url" id="recordingLink" name="videoUrl" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Add Recording</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Exam Modal -->
-    <div id="examModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add Exam</h3>
-                <button class="close-btn">&times;</button>
-            </div>
-            <form id="examForm">
-                <div class="form-group">
-                    <label for="examTitle">Title</label>
-                    <input type="text" id="examTitle" name="title" required>
-                </div>
-                <div class="form-group">
-                    <label for="examSubject">Subject</label>
-                    <input type="text" id="examSubject" name="subject" required>
-                </div>
-                <div class="form-group">
-                    <label for="examDate">Date & Time</label>
-                    <input type="datetime-local" id="examDate" name="date" required>
-                </div>
-                <div class="form-group">
-                    <label for="examDuration">Duration (minutes)</label>
-                    <input type="number" id="examDuration" name="duration" required>
-                </div>
-                <div class="form-group">
-                    <label for="examDescription">Description</label>
-                    <textarea id="examDescription" name="description" required></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Add Exam</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Announcement Modal -->
-    <div id="announcementModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add Announcement</h3>
-                <button class="close-btn">&times;</button>
-            </div>
-            <form id="announcementForm">
-                <div class="form-group">
-                    <label for="announcementTitle">Title</label>
-                    <input type="text" id="announcementTitle" name="title" required>
-                </div>
-                <div class="form-group">
-                    <label for="announcementContent">Content</label>
-                    <textarea id="announcementContent" name="content" required></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Add Announcement</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- User Modal -->
-    <div id="userModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add User</h3>
-                <button class="close-btn">&times;</button>
-            </div>
-            <form id="userForm">
-                <div class="form-group">
-                    <label for="userFullName">Full Name</label>
-                    <input type="text" id="userFullName" name="fullName" required>
-                </div>
-                <div class="form-group">
-                    <label for="userEmail">Email</label>
-                    <input type="email" id="userEmail" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="userPassword">Password</label>
-                    <input type="password" id="userPassword" name="password" required>
-                </div>
-                <div class="form-group">
-                    <label for="userRole">Role</label>
-                    <select id="userRole" name="role" required>
-                        <option value="student">Student</option>
-                        <option value="cr">CR</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="userStudentId">Student ID</label>
-                    <input type="text" id="userStudentId" name="studentId">
-                </div>
-                <div class="form-group">
-                    <label for="userSection">Section</label>
-                    <select id="userSection" name="section" required>
-                        <option value="">Select Section</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Add User</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Scripts -->
     <script src="../scripts/utils/validation.js"></script>
-    <script src="../scripts/dashboard/admin.js" type="module"></script>
+    <script src="../scripts/dashboard/admin.js"></script>
 </body>
 </html> 

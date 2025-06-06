@@ -1,797 +1,625 @@
-import { 
-    validateRegistrationForm, 
-    setupStudentIdAutoFill, 
-    validateLoginForm,
-    validateForm,
-    showValidationErrors,
-    clearValidationErrors
-} from '../utils/validation.js';
+// DOM Elements
+const navItems = document.querySelectorAll('.nav-item');
+const sections = document.querySelectorAll('.dashboard-section');
+const approvalBadge = document.getElementById('approvalBadge');
+const approvalsList = document.getElementById('approvalsList');
+const usersList = document.getElementById('usersList');
+const sectionsList = document.getElementById('sectionsList');
+const totalUsers = document.getElementById('totalUsers');
+const pendingApprovals = document.getElementById('pendingApprovals');
+const activeSections = document.getElementById('activeSections');
+const activeStudents = document.getElementById('activeStudents');
+const recentActivityList = document.getElementById('recentActivityList');
+const logoutBtn = document.getElementById('logoutBtn');
 
-// Initialize the dashboard
-document.addEventListener('DOMContentLoaded', () => {
-    // Check if user is logged in and is admin
+// Search and Filter Elements
+const approvalSearch = document.getElementById('approvalSearch');
+const approvalFilter = document.getElementById('approvalFilter');
+const userSearch = document.getElementById('userSearch');
+const userFilter = document.getElementById('userFilter');
+
+// Modal Elements
+const approvalModal = document.getElementById('approvalModal');
+const addUserModal = document.getElementById('addUserModal');
+const addSectionModal = document.getElementById('addSectionModal');
+const closeModalBtns = document.querySelectorAll('.close-modal');
+const approveBtn = document.getElementById('approveBtn');
+const rejectBtn = document.getElementById('rejectBtn');
+const addUserBtn = document.getElementById('addUserBtn');
+const addSectionBtn = document.getElementById('addSectionBtn');
+
+// Form Elements
+const addUserForm = document.getElementById('addUserForm');
+const addSectionForm = document.getElementById('addSectionForm');
+const platformSettingsForm = document.getElementById('platformSettingsForm');
+
+// Current approval being reviewed
+let currentApproval = null;
+
+// Check authentication
+function checkAuth() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser || currentUser.role !== 'admin') {
         window.location.href = '../auth/login.html';
-        return;
     }
-
-    // Update admin name in header
-    document.getElementById('adminName').textContent = currentUser.fullName;
-
-    // Initialize all sections
-    initializeDashboard();
-    setupEventListeners();
-});
-
-function initializeDashboard() {
-    // Load initial data
-    loadDashboardData();
 }
 
-function setupEventListeners() {
-    // Navigation
-    document.querySelectorAll('.nav-item').forEach(item => {
+// Navigation
+function setupNavigation() {
+    navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            const targetSection = item.getAttribute('data-section');
-            showSection(targetSection);
-        });
-    });
-
-    // Form submissions
-    document.getElementById('sectionForm')?.addEventListener('submit', handleSectionSubmit);
-    document.getElementById('resourceForm')?.addEventListener('submit', handleResourceSubmit);
-    document.getElementById('sessionForm')?.addEventListener('submit', handleSessionSubmit);
-    document.getElementById('recordingForm')?.addEventListener('submit', handleRecordingSubmit);
-    document.getElementById('examForm')?.addEventListener('submit', handleExamSubmit);
-    document.getElementById('announcementForm')?.addEventListener('submit', handleAnnouncementSubmit);
-    document.getElementById('userForm')?.addEventListener('submit', handleUserSubmit);
-
-    // Filter changes
-    document.getElementById('resourceFilter')?.addEventListener('change', filterResources);
-    document.getElementById('sessionFilter')?.addEventListener('change', filterSessions);
-    document.getElementById('recordingFilter')?.addEventListener('change', filterRecordings);
-    document.getElementById('examFilter')?.addEventListener('change', filterExams);
-    document.getElementById('userFilter')?.addEventListener('change', filterUsers);
-
-    // Add buttons
-    document.getElementById('addResourceBtn')?.addEventListener('click', () => showModal('resourceModal'));
-    document.getElementById('addSessionBtn')?.addEventListener('click', () => showModal('sessionModal'));
-    document.getElementById('addRecordingBtn')?.addEventListener('click', () => showModal('recordingModal'));
-    document.getElementById('addExamBtn')?.addEventListener('click', () => showModal('examModal'));
-    document.getElementById('addAnnouncementBtn')?.addEventListener('click', () => showModal('announcementModal'));
-    document.getElementById('addUserBtn')?.addEventListener('click', () => showModal('userModal'));
-
-    // Close buttons
-    document.querySelectorAll('.close-btn, .close-modal').forEach(button => {
-        button.addEventListener('click', function() {
-            const modal = this.closest('.modal');
-            closeModal(modal.id);
-        });
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal')) {
-            closeModal(event.target.id);
-        }
-    });
-
-    // Logout
-    document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
-}
-
-// Section Navigation
-function showSection(sectionId) {
-    // Hide all sections
-    document.querySelectorAll('.content-section').forEach(section => {
-        section.classList.remove('active');
-    });
-
-    // Show selected section
-    const targetSection = document.getElementById(sectionId);
-    if (targetSection) {
-        targetSection.classList.add('active');
-    }
-
-    // Update navigation
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-        if (item.getAttribute('data-section') === sectionId) {
+            const targetSection = item.dataset.section;
+            
+            // Update active states
+            navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
-        }
+            
+            // Show target section
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === targetSection) {
+                    section.classList.add('active');
+                }
+            });
+        });
     });
-}
-
-// Dashboard Stats
-function updateDashboardStats() {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const resources = JSON.parse(localStorage.getItem('resources') || '[]');
-    const sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
-
-    // Update stats
-    document.getElementById('totalStudents').textContent = users.filter(u => u.role === 'student').length;
-    document.getElementById('totalCRs').textContent = users.filter(u => u.role === 'cr').length;
-    document.getElementById('totalResources').textContent = resources.length;
-    document.getElementById('upcomingSessions').textContent = sessions.filter(s => new Date(s.date) > new Date()).length;
-}
-
-// Form Handlers
-async function handleSectionSubmit(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const sectionData = {
-        id: Date.now().toString(),
-        number: formData.get('sectionNumber'),
-        capacity: formData.get('sectionCapacity'),
-        description: formData.get('sectionDescription'),
-        createdAt: new Date().toISOString()
-    };
-
-    try {
-        const sections = JSON.parse(localStorage.getItem('sections') || '[]');
-        sections.push(sectionData);
-        localStorage.setItem('sections', JSON.stringify(sections));
-        
-        closeModal('sectionModal');
-        loadSections();
-        showSuccess('Section added successfully');
-        e.target.reset();
-    } catch (error) {
-        showError('Failed to add section');
-    }
-}
-
-async function handleResourceSubmit(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const resourceData = {
-        id: Date.now().toString(),
-        title: formData.get('title'),
-        subject: formData.get('subject'),
-        description: formData.get('description'),
-        link: formData.get('link'),
-        createdAt: new Date().toISOString()
-    };
-
-    try {
-        const resources = JSON.parse(localStorage.getItem('resources') || '[]');
-        resources.push(resourceData);
-        localStorage.setItem('resources', JSON.stringify(resources));
-        
-        closeModal('resourceModal');
-        loadResources();
-        showSuccess('Resource added successfully');
-        e.target.reset();
-    } catch (error) {
-        showError('Failed to add resource');
-    }
-}
-
-async function handleSessionSubmit(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const sessionData = {
-        id: Date.now().toString(),
-        title: formData.get('title'),
-        subject: formData.get('subject'),
-        date: formData.get('date'),
-        description: formData.get('description'),
-        link: formData.get('link'),
-        createdAt: new Date().toISOString()
-    };
-
-    try {
-        const sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
-        sessions.push(sessionData);
-        localStorage.setItem('sessions', JSON.stringify(sessions));
-        
-        closeModal('sessionModal');
-        loadSessions();
-        showSuccess('Session scheduled successfully');
-        e.target.reset();
-    } catch (error) {
-        showError('Failed to schedule session');
-    }
-}
-
-async function handleRecordingSubmit(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const recordingData = {
-        id: Date.now().toString(),
-        title: formData.get('title'),
-        subject: formData.get('subject'),
-        description: formData.get('description'),
-        videoUrl: formData.get('videoUrl'),
-        createdAt: new Date().toISOString()
-    };
-
-    try {
-        const recordings = JSON.parse(localStorage.getItem('recordings') || '[]');
-        recordings.push(recordingData);
-        localStorage.setItem('recordings', JSON.stringify(recordings));
-        
-        closeModal('recordingModal');
-        loadRecordings();
-        showSuccess('Recording added successfully');
-        e.target.reset();
-    } catch (error) {
-        showError('Failed to add recording');
-    }
-}
-
-async function handleExamSubmit(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const examData = {
-        id: Date.now().toString(),
-        title: formData.get('title'),
-        subject: formData.get('subject'),
-        date: formData.get('date'),
-        duration: formData.get('duration'),
-        description: formData.get('description'),
-        createdAt: new Date().toISOString()
-    };
-
-    try {
-        const exams = JSON.parse(localStorage.getItem('exams') || '[]');
-        exams.push(examData);
-        localStorage.setItem('exams', JSON.stringify(exams));
-        
-        closeModal('examModal');
-        loadExams();
-        showSuccess('Exam added successfully');
-        e.target.reset();
-    } catch (error) {
-        showError('Failed to add exam');
-    }
-}
-
-async function handleAnnouncementSubmit(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const announcementData = {
-        id: Date.now().toString(),
-        title: formData.get('title'),
-        content: formData.get('content'),
-        createdAt: new Date().toISOString()
-    };
-
-    try {
-        const announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
-        announcements.push(announcementData);
-        localStorage.setItem('announcements', JSON.stringify(announcements));
-        
-        closeModal('announcementModal');
-        loadAnnouncements();
-        showSuccess('Announcement added successfully');
-        e.target.reset();
-    } catch (error) {
-        showError('Failed to add announcement');
-    }
-}
-
-async function handleUserSubmit(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const userData = {
-        id: Date.now().toString(),
-        fullName: formData.get('fullName'),
-        email: formData.get('email'),
-        password: formData.get('password'),
-        role: formData.get('role'),
-        studentId: formData.get('studentId'),
-        section: formData.get('section'),
-        createdAt: new Date().toISOString()
-    };
-
-    try {
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        users.push(userData);
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        closeModal('userModal');
-        loadUsers();
-        showSuccess('User added successfully');
-        e.target.reset();
-    } catch (error) {
-        showError('Failed to add user');
-    }
-}
-
-// Data Loading Functions
-function loadSections() {
-    const sections = JSON.parse(localStorage.getItem('sections') || '[]');
-    const sectionsList = document.getElementById('sectionsList');
-    if (!sectionsList) return;
-
-    sectionsList.innerHTML = sections.map(section => `
-        <div class="card section-card">
-            <div class="card-body">
-                <h4>Section ${section.number}</h4>
-                <p>${section.description}</p>
-                <div class="section-meta">
-                    <span class="badge">Capacity: ${section.capacity}</span>
-                </div>
-                <div class="section-actions">
-                    <button class="btn btn-primary" onclick="editSection('${section.id}')">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-danger" onclick="deleteSection('${section.id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function loadResources() {
-    const resources = JSON.parse(localStorage.getItem('resources') || '[]');
-    const resourceList = document.getElementById('resourceList');
-    if (!resourceList) return;
-
-    resourceList.innerHTML = resources.map(resource => `
-        <div class="card resource-card">
-            <div class="card-body">
-                <h4>${resource.title}</h4>
-                <p>${resource.description}</p>
-                <div class="resource-meta">
-                    <span class="badge">${resource.subject}</span>
-                </div>
-                <div class="resource-actions">
-                    <a href="${resource.link}" class="btn btn-primary" target="_blank">
-                        <i class="fas fa-external-link-alt"></i> View
-                    </a>
-                    <button class="btn btn-danger" onclick="deleteResource('${resource.id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function loadSessions() {
-    const sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
-    const sessionList = document.getElementById('sessionList');
-    if (!sessionList) return;
-
-    sessionList.innerHTML = sessions.map(session => `
-        <div class="card session-card">
-            <div class="card-body">
-                <h4>${session.title}</h4>
-                <p>${session.description}</p>
-                <div class="session-meta">
-                    <span class="badge">${session.subject}</span>
-                    <span class="badge">${new Date(session.date).toLocaleString()}</span>
-                </div>
-                <div class="session-actions">
-                    ${session.link ? `
-                        <a href="${session.link}" class="btn btn-primary" target="_blank">
-                            <i class="fas fa-video"></i> Join
-                        </a>
-                    ` : ''}
-                    <button class="btn btn-danger" onclick="deleteSession('${session.id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function loadRecordings() {
-    const recordings = JSON.parse(localStorage.getItem('recordings') || '[]');
-    const recordingList = document.getElementById('recordingList');
-    if (!recordingList) return;
-
-    recordingList.innerHTML = recordings.map(recording => `
-        <div class="card recording-card">
-            <div class="card-body">
-                <h4>${recording.title}</h4>
-                <p>${recording.description}</p>
-                <div class="recording-meta">
-                    <span class="badge">${recording.subject}</span>
-                    <span class="badge">${new Date(recording.createdAt).toLocaleDateString()}</span>
-                </div>
-                <div class="recording-actions">
-                    <a href="${recording.videoUrl}" class="btn btn-primary" target="_blank">
-                        <i class="fas fa-play"></i> Watch
-                    </a>
-                    <button class="btn btn-danger" onclick="deleteRecording('${recording.id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function loadExams() {
-    const exams = JSON.parse(localStorage.getItem('exams') || '[]');
-    const examList = document.getElementById('examList');
-    if (!examList) return;
-
-    examList.innerHTML = exams.map(exam => `
-        <div class="card exam-card">
-            <div class="card-body">
-                <h4>${exam.title}</h4>
-                <p>${exam.description}</p>
-                <div class="exam-meta">
-                    <span class="badge">${exam.subject}</span>
-                    <span class="badge">${new Date(exam.date).toLocaleString()}</span>
-                    <span class="badge">Duration: ${exam.duration} minutes</span>
-                </div>
-                <div class="exam-actions">
-                    <button class="btn btn-danger" onclick="deleteExam('${exam.id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function loadAnnouncements() {
-    const announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
-    const announcementList = document.getElementById('announcementList');
-    if (!announcementList) return;
-
-    announcementList.innerHTML = announcements.map(announcement => `
-        <div class="card announcement-card">
-            <div class="card-body">
-                <h4>${announcement.title}</h4>
-                <p>${announcement.content}</p>
-                <div class="announcement-meta">
-                    <span class="badge">${new Date(announcement.createdAt).toLocaleString()}</span>
-                </div>
-                <div class="announcement-actions">
-                    <button class="btn btn-danger" onclick="deleteAnnouncement('${announcement.id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function loadUsers() {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const userList = document.getElementById('userList');
-    if (!userList) return;
-
-    userList.innerHTML = users.map(user => `
-        <div class="card user-card">
-            <div class="card-body">
-                <h4>${user.fullName}</h4>
-                <p>${user.email}</p>
-                <div class="user-meta">
-                    <span class="badge badge-${user.role}">${user.role.toUpperCase()}</span>
-                    ${user.studentId ? `<span class="badge">ID: ${user.studentId}</span>` : ''}
-                    ${user.section ? `<span class="badge">Section: ${user.section}</span>` : ''}
-                </div>
-                <div class="user-actions">
-                    <button class="btn btn-primary" onclick="editUser('${user.id}')">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-danger" onclick="deleteUser('${user.id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Filter Functions
-function filterResources() {
-    const filter = document.getElementById('resourceFilter').value;
-    const resources = document.querySelectorAll('.resource-card');
-    
-    resources.forEach(resource => {
-        if (filter === 'all' || resource.querySelector('.badge').textContent === filter) {
-            resource.style.display = 'block';
-        } else {
-            resource.style.display = 'none';
-        }
-    });
-}
-
-function filterSessions() {
-    const filter = document.getElementById('sessionFilter').value;
-    const sessions = document.querySelectorAll('.session-card');
-    
-    sessions.forEach(session => {
-        if (filter === 'all' || session.querySelector('.badge').textContent === filter) {
-            session.style.display = 'block';
-        } else {
-            session.style.display = 'none';
-        }
-    });
-}
-
-function filterRecordings() {
-    const filter = document.getElementById('recordingFilter').value;
-    const recordings = document.querySelectorAll('.recording-card');
-    
-    recordings.forEach(recording => {
-        if (filter === 'all' || recording.querySelector('.badge').textContent === filter) {
-            recording.style.display = 'block';
-        } else {
-            recording.style.display = 'none';
-        }
-    });
-}
-
-function filterExams() {
-    const filter = document.getElementById('examFilter').value;
-    const exams = document.querySelectorAll('.exam-card');
-    
-    exams.forEach(exam => {
-        if (filter === 'all' || exam.querySelector('.badge').textContent === filter) {
-            exam.style.display = 'block';
-        } else {
-            exam.style.display = 'none';
-        }
-    });
-}
-
-function filterUsers() {
-    const filter = document.getElementById('userFilter').value;
-    const users = document.querySelectorAll('.user-card');
-    
-    users.forEach(user => {
-        if (filter === 'all' || user.querySelector('.badge').textContent.toLowerCase() === filter) {
-            user.style.display = 'block';
-        } else {
-            user.style.display = 'none';
-        }
-    });
-}
-
-// Modal Functions
-function showModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'block';
-    }
-}
-
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
-
-// Delete Functions
-function deleteSection(sectionId) {
-    if (!confirm('Are you sure you want to delete this section?')) return;
-
-    try {
-        const sections = JSON.parse(localStorage.getItem('sections') || '[]');
-        const updatedSections = sections.filter(section => section.id !== sectionId);
-        localStorage.setItem('sections', JSON.stringify(updatedSections));
-        
-        loadSections();
-        showSuccess('Section deleted successfully');
-    } catch (error) {
-        showError('Failed to delete section');
-    }
-}
-
-function deleteResource(resourceId) {
-    if (!confirm('Are you sure you want to delete this resource?')) return;
-
-    try {
-        const resources = JSON.parse(localStorage.getItem('resources') || '[]');
-        const updatedResources = resources.filter(resource => resource.id !== resourceId);
-        localStorage.setItem('resources', JSON.stringify(updatedResources));
-        
-        loadResources();
-        showSuccess('Resource deleted successfully');
-    } catch (error) {
-        showError('Failed to delete resource');
-    }
-}
-
-function deleteSession(sessionId) {
-    if (!confirm('Are you sure you want to delete this session?')) return;
-
-    try {
-        const sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
-        const updatedSessions = sessions.filter(session => session.id !== sessionId);
-        localStorage.setItem('sessions', JSON.stringify(updatedSessions));
-        
-        loadSessions();
-        showSuccess('Session deleted successfully');
-    } catch (error) {
-        showError('Failed to delete session');
-    }
-}
-
-function deleteRecording(recordingId) {
-    if (!confirm('Are you sure you want to delete this recording?')) return;
-
-    try {
-        const recordings = JSON.parse(localStorage.getItem('recordings') || '[]');
-        const updatedRecordings = recordings.filter(recording => recording.id !== recordingId);
-        localStorage.setItem('recordings', JSON.stringify(updatedRecordings));
-        
-        loadRecordings();
-        showSuccess('Recording deleted successfully');
-    } catch (error) {
-        showError('Failed to delete recording');
-    }
-}
-
-function deleteExam(examId) {
-    if (!confirm('Are you sure you want to delete this exam?')) return;
-
-    try {
-        const exams = JSON.parse(localStorage.getItem('exams') || '[]');
-        const updatedExams = exams.filter(exam => exam.id !== examId);
-        localStorage.setItem('exams', JSON.stringify(updatedExams));
-        
-        loadExams();
-        showSuccess('Exam deleted successfully');
-    } catch (error) {
-        showError('Failed to delete exam');
-    }
-}
-
-function deleteAnnouncement(announcementId) {
-    if (!confirm('Are you sure you want to delete this announcement?')) return;
-
-    try {
-        const announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
-        const updatedAnnouncements = announcements.filter(announcement => announcement.id !== announcementId);
-        localStorage.setItem('announcements', JSON.stringify(updatedAnnouncements));
-        
-        loadAnnouncements();
-        showSuccess('Announcement deleted successfully');
-    } catch (error) {
-        showError('Failed to delete announcement');
-    }
-}
-
-function deleteUser(userId) {
-    if (!confirm('Are you sure you want to delete this user?')) return;
-
-    try {
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        const updatedUsers = users.filter(user => user.id !== userId);
-        localStorage.setItem('users', JSON.stringify(updatedUsers));
-        
-        loadUsers();
-        showSuccess('User deleted successfully');
-    } catch (error) {
-        showError('Failed to delete user');
-    }
-}
-
-// Edit Functions
-function editSection(sectionId) {
-    const sections = JSON.parse(localStorage.getItem('sections') || '[]');
-    const section = sections.find(s => s.id === sectionId);
-    if (!section) return;
-
-    const form = document.getElementById('sectionForm');
-    form.querySelector('[name="sectionNumber"]').value = section.number;
-    form.querySelector('[name="sectionCapacity"]').value = section.capacity;
-    form.querySelector('[name="sectionDescription"]').value = section.description;
-
-    showModal('sectionModal');
-}
-
-function editUser(userId) {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find(u => u.id === userId);
-    if (!user) return;
-
-    const form = document.getElementById('userForm');
-    form.querySelector('[name="fullName"]').value = user.fullName;
-    form.querySelector('[name="email"]').value = user.email;
-    form.querySelector('[name="role"]').value = user.role;
-    form.querySelector('[name="studentId"]').value = user.studentId || '';
-    form.querySelector('[name="section"]').value = user.section || '';
-
-    showModal('userModal');
-}
-
-// Notification Functions
-function showSuccess(message) {
-    // TODO: Implement success notification
-    console.log('Success:', message);
-}
-
-function showError(message) {
-    // TODO: Implement error notification
-    console.error('Error:', message);
-}
-
-// Logout
-function handleLogout() {
-    localStorage.removeItem('currentUser');
-    window.location.href = '../auth/login.html';
 }
 
 // Load dashboard data
-async function loadDashboardData() {
+function loadDashboardData() {
     try {
-        // Load overview stats
-        await loadOverviewStats();
-        
-        // Load sections
-        await loadSections();
-        
-        // Load resources
-        await loadResources();
-        
-        // Load sessions
-        await loadSessions();
-        
-        // Load recordings
-        await loadRecordings();
-        
-        // Load exams
-        await loadExams();
-        
-        // Load announcements
-        await loadAnnouncements();
-        
         // Load users
-        await loadUsers();
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        totalUsers.textContent = users.length;
+        activeStudents.textContent = users.filter(user => user.role === 'student' && user.status === 'active').length;
+
+        // Load approvals
+        const approvalRequests = JSON.parse(localStorage.getItem('approvalRequests') || '[]');
+        const pendingRequests = approvalRequests.filter(req => req.status === 'pending');
+        pendingApprovals.textContent = pendingRequests.length;
+        approvalBadge.textContent = pendingRequests.length;
+
+        // Load sections
+        const sections = new Set(users.map(user => user.section).filter(Boolean));
+        activeSections.textContent = sections.size;
+
+        // Load recent activity
+        loadRecentActivity();
+
+        // Load initial lists
+        loadApprovalsList();
+        loadUsersList();
+        loadSectionsList();
     } catch (error) {
         console.error('Error loading dashboard data:', error);
-        showNotification('Error loading dashboard data', 'error');
+        showError('Failed to load dashboard data. Please try refreshing the page.');
     }
 }
 
-// Load overview stats
-async function loadOverviewStats() {
+// Load recent activity
+function loadRecentActivity() {
     try {
-        // Simulate API call
-        const stats = {
-            totalStudents: 150,
-            totalCRs: 5,
-            totalResources: 45,
-            upcomingSessions: 3
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const approvalRequests = JSON.parse(localStorage.getItem('approvalRequests') || '[]');
+        
+        // Combine and sort activities
+        const activities = [
+            ...users.map(user => ({
+                type: 'user',
+                action: user.status === 'active' ? 'registered' : 'status_changed',
+                user: user.fullName,
+                role: user.role,
+                timestamp: user.registeredAt || new Date().toISOString()
+            })),
+            ...approvalRequests.map(req => ({
+                type: 'approval',
+                action: req.status,
+                user: req.fullName,
+                role: req.role,
+                timestamp: req.processedAt || req.requestedAt
+            }))
+        ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+         .slice(0, 10);
+
+        recentActivityList.innerHTML = activities.length ? '' : '<p class="no-data">No recent activity</p>';
+
+        activities.forEach(activity => {
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.innerHTML = `
+                <div class="activity-icon">
+                    <i class="fas ${getActivityIcon(activity)}"></i>
+                </div>
+                <div class="activity-details">
+                    <p>${formatActivityMessage(activity)}</p>
+                    <small>${new Date(activity.timestamp).toLocaleString()}</small>
+                </div>
+            `;
+            recentActivityList.appendChild(item);
+        });
+    } catch (error) {
+        console.error('Error loading recent activity:', error);
+        recentActivityList.innerHTML = '<p class="error">Failed to load recent activity</p>';
+    }
+}
+
+// Get activity icon
+function getActivityIcon(activity) {
+    switch (activity.type) {
+        case 'user':
+            return activity.action === 'registered' ? 'fa-user-plus' : 'fa-user-edit';
+        case 'approval':
+            return activity.action === 'approved' ? 'fa-check-circle' : 'fa-times-circle';
+        default:
+            return 'fa-info-circle';
+    }
+}
+
+// Format activity message
+function formatActivityMessage(activity) {
+    switch (activity.type) {
+        case 'user':
+            return activity.action === 'registered' 
+                ? `${activity.user} (${activity.role}) registered`
+                : `${activity.user}'s status was updated`;
+        case 'approval':
+            return `${activity.user}'s ${activity.role} request was ${activity.action}`;
+        default:
+            return 'Unknown activity';
+    }
+}
+
+// Load approvals list
+function loadApprovalsList() {
+    try {
+        const approvalRequests = JSON.parse(localStorage.getItem('approvalRequests') || '[]');
+        const searchTerm = approvalSearch.value.toLowerCase();
+        const filterValue = approvalFilter.value;
+
+        let filteredRequests = approvalRequests.filter(req => req.status === 'pending');
+        
+        // Apply search filter
+        if (searchTerm) {
+            filteredRequests = filteredRequests.filter(req => 
+                req.fullName.toLowerCase().includes(searchTerm) ||
+                req.email.toLowerCase().includes(searchTerm) ||
+                req.studentId.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        // Apply role filter
+        if (filterValue !== 'all') {
+            filteredRequests = filteredRequests.filter(req => req.role === filterValue);
+        }
+
+        approvalsList.innerHTML = filteredRequests.length ? '' : '<p class="no-data">No pending approvals</p>';
+
+        filteredRequests.forEach(request => {
+            const card = document.createElement('div');
+            card.className = 'approval-card';
+            card.innerHTML = `
+                <div class="approval-info">
+                    <h4>${request.fullName}</h4>
+                    <p><strong>Email:</strong> ${request.email}</p>
+                    <p><strong>Role:</strong> ${request.role === 'cr' ? 'CR' : 'Co-CR'}</p>
+                    <p><strong>Section:</strong> ${request.section}</p>
+                    <p><strong>Requested:</strong> ${new Date(request.requestedAt).toLocaleDateString()}</p>
+                </div>
+                <div class="approval-actions">
+                    <button class="btn btn-primary review-btn" data-id="${request.email}">
+                        <i class="fas fa-eye"></i> Review
+                    </button>
+                </div>
+            `;
+
+            card.querySelector('.review-btn').addEventListener('click', () => {
+                showApprovalModal(request);
+            });
+
+            approvalsList.appendChild(card);
+        });
+    } catch (error) {
+        console.error('Error loading approvals list:', error);
+        approvalsList.innerHTML = '<p class="error">Failed to load approvals</p>';
+    }
+}
+
+// Load users list
+function loadUsersList() {
+    try {
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const searchTerm = userSearch.value.toLowerCase();
+        const filterValue = userFilter.value;
+
+        let filteredUsers = [...users];
+        
+        // Apply search filter
+        if (searchTerm) {
+            filteredUsers = filteredUsers.filter(user => 
+                user.fullName.toLowerCase().includes(searchTerm) ||
+                user.email.toLowerCase().includes(searchTerm) ||
+                user.studentId.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        // Apply role filter
+        if (filterValue !== 'all') {
+            filteredUsers = filteredUsers.filter(user => user.role === filterValue);
+        }
+
+        usersList.innerHTML = filteredUsers.length ? '' : '<p class="no-data">No users found</p>';
+
+        filteredUsers.forEach(user => {
+            const card = document.createElement('div');
+            card.className = 'user-card';
+            card.innerHTML = `
+                <div class="user-info">
+                    <h4>${user.fullName}</h4>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Role:</strong> ${user.role}</p>
+                    <p><strong>Section:</strong> ${user.section || 'N/A'}</p>
+                    <p><strong>Status:</strong> <span class="status-badge ${user.status}">${user.status}</span></p>
+                </div>
+                <div class="user-actions">
+                    <button class="btn btn-primary edit-btn" data-id="${user.email}">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-danger delete-btn" data-id="${user.email}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            `;
+
+            card.querySelector('.edit-btn').addEventListener('click', () => {
+                showEditUserModal(user);
+            });
+
+            card.querySelector('.delete-btn').addEventListener('click', () => {
+                if (confirm(`Are you sure you want to delete ${user.fullName}?`)) {
+                    deleteUser(user.email);
+                }
+            });
+
+            usersList.appendChild(card);
+        });
+    } catch (error) {
+        console.error('Error loading users list:', error);
+        usersList.innerHTML = '<p class="error">Failed to load users</p>';
+    }
+}
+
+// Load sections list
+function loadSectionsList() {
+    try {
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const sections = new Set(users.map(user => user.section).filter(Boolean));
+        
+        sectionsList.innerHTML = sections.size ? '' : '<p class="no-data">No sections found</p>';
+
+        sections.forEach(section => {
+            const sectionUsers = users.filter(user => user.section === section);
+            const cr = sectionUsers.find(user => user.role === 'cr');
+            const coCr = sectionUsers.find(user => user.role === 'co-cr');
+            const studentCount = sectionUsers.filter(user => user.role === 'student').length;
+
+            const card = document.createElement('div');
+            card.className = 'section-card';
+            card.innerHTML = `
+                <div class="section-info">
+                    <h4>${section}</h4>
+                    <p><strong>Students:</strong> ${studentCount}</p>
+                    <p><strong>CR:</strong> ${cr ? cr.fullName : 'Not assigned'}</p>
+                    <p><strong>Co-CR:</strong> ${coCr ? coCr.fullName : 'Not assigned'}</p>
+                </div>
+                <div class="section-actions">
+                    <button class="btn btn-primary edit-btn" data-section="${section}">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-danger delete-btn" data-section="${section}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            `;
+
+            card.querySelector('.edit-btn').addEventListener('click', () => {
+                showEditSectionModal(section);
+            });
+
+            card.querySelector('.delete-btn').addEventListener('click', () => {
+                if (confirm(`Are you sure you want to delete section ${section}?`)) {
+                    deleteSection(section);
+                }
+            });
+
+            sectionsList.appendChild(card);
+        });
+    } catch (error) {
+        console.error('Error loading sections list:', error);
+        sectionsList.innerHTML = '<p class="error">Failed to load sections</p>';
+    }
+}
+
+// Show approval modal
+function showApprovalModal(approval) {
+    currentApproval = approval;
+    
+    // Fill modal with approval details
+    document.getElementById('approvalName').textContent = approval.fullName;
+    document.getElementById('approvalEmail').textContent = approval.email;
+    document.getElementById('approvalStudentId').textContent = approval.studentId;
+    document.getElementById('approvalRole').textContent = approval.role === 'cr' ? 'CR' : 'Co-CR';
+    document.getElementById('approvalSection').textContent = approval.section;
+    document.getElementById('approvalDate').textContent = new Date(approval.requestedAt).toLocaleString();
+
+    // Show modal
+    approvalModal.style.display = 'block';
+}
+
+// Show add user modal
+function showAddUserModal() {
+    // Load sections into select
+    const sectionSelect = document.getElementById('newUserSection');
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const sections = new Set(users.map(user => user.section).filter(Boolean));
+    
+    sectionSelect.innerHTML = '';
+    sections.forEach(section => {
+        const option = document.createElement('option');
+        option.value = section;
+        option.textContent = section;
+        sectionSelect.appendChild(option);
+    });
+
+    // Show modal
+    addUserModal.style.display = 'block';
+}
+
+// Show add section modal
+function showAddSectionModal() {
+    addSectionModal.style.display = 'block';
+}
+
+// Handle approval
+function handleApproval(approved) {
+    if (!currentApproval) return;
+
+    try {
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const approvalRequests = JSON.parse(localStorage.getItem('approvalRequests') || '[]');
+
+        // Update user status
+        const userIndex = users.findIndex(u => u.email === currentApproval.email);
+        if (userIndex !== -1) {
+            users[userIndex].status = approved ? 'active' : 'rejected';
+        }
+
+        // Update approval request status
+        const requestIndex = approvalRequests.findIndex(r => r.email === currentApproval.email);
+        if (requestIndex !== -1) {
+            approvalRequests[requestIndex].status = approved ? 'approved' : 'rejected';
+            approvalRequests[requestIndex].processedAt = new Date().toISOString();
+        }
+
+        // Save changes
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('approvalRequests', JSON.stringify(approvalRequests));
+
+        // Close modal and reload data
+        approvalModal.style.display = 'none';
+        currentApproval = null;
+        loadDashboardData();
+    } catch (error) {
+        console.error('Error handling approval:', error);
+        showError('Failed to process approval. Please try again.');
+    }
+}
+
+// Handle add user
+function handleAddUser(event) {
+    event.preventDefault();
+
+    try {
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const newUser = {
+            email: document.getElementById('newUserEmail').value,
+            fullName: document.getElementById('newUserFullName').value,
+            studentId: document.getElementById('newUserStudentId').value,
+            role: document.getElementById('newUserRole').value,
+            section: document.getElementById('newUserSection').value,
+            password: document.getElementById('newUserPassword').value,
+            status: 'active',
+            registeredAt: new Date().toISOString()
         };
 
-        // Update UI
-        document.getElementById('totalStudents').textContent = stats.totalStudents;
-        document.getElementById('totalCRs').textContent = stats.totalCRs;
-        document.getElementById('totalResources').textContent = stats.totalResources;
-        document.getElementById('upcomingSessions').textContent = stats.upcomingSessions;
+        // Check if user already exists
+        if (users.some(user => user.email === newUser.email)) {
+            showError('User with this email already exists');
+            return;
+        }
+
+        // Add user
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+
+        // Close modal and reload data
+        addUserModal.style.display = 'none';
+        addUserForm.reset();
+        loadDashboardData();
     } catch (error) {
-        console.error('Error loading overview stats:', error);
-        showNotification('Error loading overview stats', 'error');
+        console.error('Error adding user:', error);
+        showError('Failed to add user. Please try again.');
     }
 }
 
-// Show notification
-function showNotification(message, type = 'success') {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
+// Handle add section
+function handleAddSection(event) {
+    event.preventDefault();
 
-    // Add to document
-    document.body.appendChild(notification);
+    try {
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const newSection = document.getElementById('newSectionName').value;
+        const description = document.getElementById('newSectionDescription').value;
 
-    // Remove after 3 seconds
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
+        // Check if section already exists
+        if (users.some(user => user.section === newSection)) {
+            showError('Section already exists');
+            return;
+        }
+
+        // Add section to settings
+        const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+        if (!settings.sections) {
+            settings.sections = [];
+        }
+        settings.sections.push({
+            name: newSection,
+            description: description,
+            createdAt: new Date().toISOString()
+        });
+        localStorage.setItem('settings', JSON.stringify(settings));
+
+        // Close modal and reload data
+        addSectionModal.style.display = 'none';
+        addSectionForm.reset();
+        loadDashboardData();
+    } catch (error) {
+        console.error('Error adding section:', error);
+        showError('Failed to add section. Please try again.');
+    }
 }
 
-// Export functions for use in other modules
-export {
-    showModal,
-    showNotification,
-    loadDashboardData
-}; 
+// Handle platform settings
+function handlePlatformSettings(event) {
+    event.preventDefault();
+
+    try {
+        const settings = {
+            platformName: document.getElementById('platformName').value,
+            maxFileSize: parseInt(document.getElementById('maxFileSize').value),
+            allowedFileTypes: document.getElementById('allowedFileTypes').value.split(',').map(type => type.trim())
+        };
+
+        localStorage.setItem('settings', JSON.stringify(settings));
+        showSuccess('Settings saved successfully');
+    } catch (error) {
+        console.error('Error saving settings:', error);
+        showError('Failed to save settings. Please try again.');
+    }
+}
+
+// Delete user
+function deleteUser(email) {
+    try {
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const updatedUsers = users.filter(user => user.email !== email);
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+        loadDashboardData();
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        showError('Failed to delete user. Please try again.');
+    }
+}
+
+// Delete section
+function deleteSection(section) {
+    try {
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+
+        // Update users
+        users.forEach(user => {
+            if (user.section === section) {
+                user.section = null;
+            }
+        });
+        localStorage.setItem('users', JSON.stringify(users));
+
+        // Update settings
+        if (settings.sections) {
+            settings.sections = settings.sections.filter(s => s.name !== section);
+            localStorage.setItem('settings', JSON.stringify(settings));
+        }
+
+        loadDashboardData();
+    } catch (error) {
+        console.error('Error deleting section:', error);
+        showError('Failed to delete section. Please try again.');
+    }
+}
+
+// Show error message
+function showError(message) {
+    // Implement error message display
+    alert(message); // Replace with better UI
+}
+
+// Show success message
+function showSuccess(message) {
+    // Implement success message display
+    alert(message); // Replace with better UI
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Close modals
+    closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            approvalModal.style.display = 'none';
+            addUserModal.style.display = 'none';
+            addSectionModal.style.display = 'none';
+            currentApproval = null;
+        });
+    });
+
+    // Close modals when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === approvalModal) {
+            approvalModal.style.display = 'none';
+            currentApproval = null;
+        }
+        if (e.target === addUserModal) {
+            addUserModal.style.display = 'none';
+        }
+        if (e.target === addSectionModal) {
+            addSectionModal.style.display = 'none';
+        }
+    });
+
+    // Approve button
+    approveBtn.addEventListener('click', () => handleApproval(true));
+
+    // Reject button
+    rejectBtn.addEventListener('click', () => handleApproval(false));
+
+    // Add user button
+    addUserBtn.addEventListener('click', showAddUserModal);
+
+    // Add section button
+    addSectionBtn.addEventListener('click', showAddSectionModal);
+
+    // Form submissions
+    addUserForm.addEventListener('submit', handleAddUser);
+    addSectionForm.addEventListener('submit', handleAddSection);
+    platformSettingsForm.addEventListener('submit', handlePlatformSettings);
+
+    // Search and filter
+    approvalSearch.addEventListener('input', loadApprovalsList);
+    approvalFilter.addEventListener('change', loadApprovalsList);
+    userSearch.addEventListener('input', loadUsersList);
+    userFilter.addEventListener('change', loadUsersList);
+
+    // Logout
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('currentUser');
+        window.location.href = '../auth/login.html';
+    });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+    setupNavigation();
+    setupEventListeners();
+    loadDashboardData();
+});

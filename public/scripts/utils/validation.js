@@ -8,8 +8,9 @@ const DIU_EMAIL_REGEX = /^(\d{3}-\d{2}-\d{4})@diu\.edu\.bd$/;
  * @param {string} email - The email to validate
  * @returns {boolean} - True if email is valid, false otherwise
  */
-export function isValidDIUEmail(email) {
-    return DIU_EMAIL_REGEX.test(email);
+function isValidDIUEmail(email) {
+    const diuEmailRegex = /^[a-zA-Z0-9._%+-]+@diu\.edu\.bd$/;
+    return diuEmailRegex.test(email);
 }
 
 /**
@@ -17,8 +18,9 @@ export function isValidDIUEmail(email) {
  * @param {string} email - The DIU email address
  * @returns {string|null} - The student ID or null if email is invalid
  */
-export function extractStudentIdFromEmail(email) {
-    const match = email.match(DIU_EMAIL_REGEX);
+function extractStudentIdFromEmail(email) {
+    if (!isValidDIUEmail(email)) return null;
+    const match = email.match(/^([a-zA-Z0-9._%+-]+)@diu\.edu\.bd$/);
     return match ? match[1] : null;
 }
 
@@ -28,9 +30,9 @@ export function extractStudentIdFromEmail(email) {
  * @param {string} email - The email to compare against
  * @returns {boolean} - True if student ID matches email, false otherwise
  */
-export function validateStudentIdWithEmail(studentId, email) {
-    const emailStudentId = extractStudentIdFromEmail(email);
-    return emailStudentId === studentId;
+function validateStudentIdWithEmail(studentId, email) {
+    const extractedId = extractStudentIdFromEmail(email);
+    return extractedId === studentId;
 }
 
 /**
@@ -38,16 +40,9 @@ export function validateStudentIdWithEmail(studentId, email) {
  * @param {string} email - The email to check
  * @returns {Promise<boolean>} - True if email is already registered, false otherwise
  */
-export async function isEmailRegistered(email) {
-    try {
-        // TODO: Replace with actual API call to check email in database
-        const response = await fetch(`/api/check-email?email=${encodeURIComponent(email)}`);
-        const data = await response.json();
-        return data.isRegistered;
-    } catch (error) {
-        console.error('Error checking email:', error);
-        return false;
-    }
+async function isEmailRegistered(email) {
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    return users.some(user => user.email === email);
 }
 
 /**
@@ -55,30 +50,58 @@ export async function isEmailRegistered(email) {
  * @param {HTMLFormElement} form - The form to validate
  * @returns {Promise<{isValid: boolean, errors: string[]}>} - Validation result
  */
-export async function validateRegistrationForm(form) {
+async function validateRegistrationForm(form) {
     const errors = [];
-    const email = form.querySelector('[name="email"]').value;
-    const studentId = form.querySelector('[name="studentId"]')?.value;
+    const email = form.email.value.trim();
+    const studentId = form.studentId.value.trim();
+    const fullName = form.fullName.value.trim();
+    const role = form.role.value;
+    const section = form.section?.value;
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
 
-    // Validate email format
-    if (!isValidDIUEmail(email)) {
-        errors.push('Email must be in the format: xxx-xx-xxxx@diu.edu.bd');
+    // Email validation
+    if (!email) {
+        errors.push('Email is required');
+    } else if (!isValidDIUEmail(email)) {
+        errors.push('Please enter a valid DIU email address');
     }
 
-    // Check if email is already registered
-    if (await isEmailRegistered(email)) {
-        errors.push('This email is already registered');
+    // Student ID validation
+    if (!studentId) {
+        errors.push('Student ID is required');
     }
 
-    // If student ID is provided, validate it matches email
-    if (studentId && !validateStudentIdWithEmail(studentId, email)) {
-        errors.push('Student ID must match the ID in your email address');
+    // Full name validation
+    if (!fullName) {
+        errors.push('Full name is required');
     }
 
-    return {
-        isValid: errors.length === 0,
-        errors
-    };
+    // Role validation
+    if (!role) {
+        errors.push('Please select a role');
+    }
+
+    // Section validation for CR/Co-CR
+    if (role !== 'student' && !section) {
+        errors.push('Please select a section');
+    }
+
+    // Password validation
+    if (!password) {
+        errors.push('Password is required');
+    } else if (password.length < 8) {
+        errors.push('Password must be at least 8 characters long');
+    }
+
+    // Confirm password validation
+    if (!confirmPassword) {
+        errors.push('Please confirm your password');
+    } else if (password !== confirmPassword) {
+        errors.push('Passwords do not match');
+    }
+
+    return errors;
 }
 
 /**
@@ -86,15 +109,14 @@ export async function validateRegistrationForm(form) {
  * @param {HTMLInputElement} emailInput - The email input element
  * @param {HTMLInputElement} studentIdInput - The student ID input element
  */
-export function setupStudentIdAutoFill(emailInput, studentIdInput) {
+function setupStudentIdAutoFill(emailInput, studentIdInput) {
     emailInput.addEventListener('input', () => {
-        const studentId = extractStudentIdFromEmail(emailInput.value);
-        if (studentId) {
-            studentIdInput.value = studentId;
-            studentIdInput.readOnly = true;
-        } else {
-            studentIdInput.value = '';
-            studentIdInput.readOnly = false;
+        const email = emailInput.value.trim();
+        if (isValidDIUEmail(email)) {
+            const studentId = extractStudentIdFromEmail(email);
+            if (studentId) {
+                studentIdInput.value = studentId;
+            }
         }
     });
 }
@@ -104,38 +126,43 @@ export function setupStudentIdAutoFill(emailInput, studentIdInput) {
  * @param {HTMLFormElement} form - The form to validate
  * @returns {Promise<{isValid: boolean, errors: string[]}>} - Validation result
  */
-export async function validateLoginForm(form) {
+async function validateLoginForm(form) {
     const errors = [];
-    const email = form.querySelector('[name="email"]').value;
+    const email = form.email.value.trim();
+    const password = form.password.value;
 
-    // Validate email format
-    if (!isValidDIUEmail(email)) {
-        errors.push('Please use your DIU email address');
+    // Email validation
+    if (!email) {
+        errors.push('Email is required');
+    } else if (!isValidDIUEmail(email)) {
+        errors.push('Please enter a valid DIU email address');
     }
 
-    return {
-        isValid: errors.length === 0,
-        errors
-    };
+    // Password validation
+    if (!password) {
+        errors.push('Password is required');
+    }
+
+    return errors;
 }
 
 // Validation utility functions
 
 // Validate email format
-export function validateEmail(email) {
+function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
 }
 
 // Validate password strength
-export function validatePassword(password) {
+function validatePassword(password) {
     // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
     const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
     return re.test(password);
 }
 
 // Validate URL format
-export function validateURL(url) {
+function validateURL(url) {
     try {
         new URL(url);
         return true;
@@ -145,24 +172,24 @@ export function validateURL(url) {
 }
 
 // Validate required fields
-export function validateRequired(value) {
+function validateRequired(value) {
     return value !== null && value !== undefined && value.trim() !== '';
 }
 
 // Validate date format
-export function validateDate(date) {
+function validateDate(date) {
     const d = new Date(date);
     return d instanceof Date && !isNaN(d);
 }
 
 // Validate number range
-export function validateNumberRange(value, min, max) {
+function validateNumberRange(value, min, max) {
     const num = Number(value);
     return !isNaN(num) && num >= min && num <= max;
 }
 
 // Validate form data
-export function validateForm(formData, rules) {
+function validateForm(formData, rules) {
     const errors = {};
     
     for (const [field, rule] of Object.entries(rules)) {
@@ -201,26 +228,53 @@ export function validateForm(formData, rules) {
 }
 
 // Show validation errors in UI
-export function showValidationErrors(errors, formElement) {
-    // Clear previous errors
-    formElement.querySelectorAll('.error-message').forEach(el => el.remove());
-    formElement.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-    
-    // Show new errors
-    for (const [field, message] of Object.entries(errors)) {
-        const input = formElement.querySelector(`[name="${field}"]`);
-        if (input) {
-            input.classList.add('error');
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.textContent = message;
-            input.parentNode.appendChild(errorDiv);
-        }
-    }
+function showValidationErrors(errors) {
+    clearValidationErrors();
+    errors.forEach(error => {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i>${error}`;
+        document.querySelector('.auth-form').insertBefore(errorDiv, document.querySelector('.form-actions'));
+    });
 }
 
 // Clear validation errors
-export function clearValidationErrors(formElement) {
-    formElement.querySelectorAll('.error-message').forEach(el => el.remove());
-    formElement.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-} 
+function clearValidationErrors() {
+    const errors = document.querySelectorAll('.error-message');
+    errors.forEach(error => error.remove());
+}
+
+// Toggle password visibility
+function togglePasswordVisibility(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+// Make functions available globally
+window.isValidDIUEmail = isValidDIUEmail;
+window.extractStudentIdFromEmail = extractStudentIdFromEmail;
+window.validateStudentIdWithEmail = validateStudentIdWithEmail;
+window.isEmailRegistered = isEmailRegistered;
+window.validateRegistrationForm = validateRegistrationForm;
+window.setupStudentIdAutoFill = setupStudentIdAutoFill;
+window.validateLoginForm = validateLoginForm;
+window.showValidationErrors = showValidationErrors;
+window.clearValidationErrors = clearValidationErrors;
+window.validateEmail = validateEmail;
+window.validatePassword = validatePassword;
+window.validateURL = validateURL;
+window.validateRequired = validateRequired;
+window.validateDate = validateDate;
+window.validateNumberRange = validateNumberRange;
+window.validateForm = validateForm;
+window.togglePasswordVisibility = togglePasswordVisibility; 

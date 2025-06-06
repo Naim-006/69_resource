@@ -1,374 +1,475 @@
+// Global variables
+let currentUser;
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is logged in
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser) {
-        window.location.href = '../../../auth/login.html';
-        return;
-    }
+    try {
+        // Check if user is logged in
+        currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            window.location.href = '../auth/login.html';
+            return;
+        }
 
-    // Update user info in header
-    document.getElementById('userName').textContent = currentUser.fullName;
-    document.getElementById('headerUserName').textContent = currentUser.fullName;
-    document.getElementById('userEmail').textContent = currentUser.email;
+        // Update user info in header
+        document.getElementById('headerUserName').textContent = currentUser.fullName;
 
-    // Navigation
-    const navLinks = document.querySelectorAll('.sidebar-nav a');
-    const sections = document.querySelectorAll('.content-section');
+        // Navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.dashboard-section');
 
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-section');
 
-            // Update active states
-            navLinks.forEach(l => l.parentElement.classList.remove('active'));
-            this.parentElement.classList.add('active');
+                // Update active states
+                navItems.forEach(nav => nav.classList.remove('active'));
+                sections.forEach(section => section.classList.remove('active'));
 
-            sections.forEach(section => {
-                section.classList.remove('active');
-                if (section.id === targetId) {
-                    section.classList.add('active');
-                }
+                this.classList.add('active');
+                document.getElementById(targetId).classList.add('active');
             });
         });
-    });
 
-    // Logout functionality
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-        localStorage.removeItem('currentUser');
-        window.location.href = '../../../auth/login.html';
-    });
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('currentUser');
+            window.location.href = '../auth/login.html';
+        });
 
-    // Load initial data
-    loadResources();
-    loadSessions();
-    loadRecordings();
-    loadExams();
-    loadAnnouncements();
+        // Load initial data
+        loadOverview();
+        loadResources();
+        loadSessions();
+        loadRecordings();
+        loadExams();
+        loadAnnouncements();
 
-    // Filter functionality
-    setupFilters();
+        // Filter functionality
+        setupFilters();
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        alert('There was an error loading the dashboard. Please try again.');
+    }
 });
+
+// Load overview data
+function loadOverview() {
+    try {
+        // Load resources count
+        const resources = JSON.parse(localStorage.getItem('resources') || '[]')
+            .filter(r => r.section === currentUser.section);
+        document.getElementById('resourceCount').textContent = resources.length;
+
+        // Load upcoming sessions count
+        const sessions = JSON.parse(localStorage.getItem('sessions') || '[]')
+            .filter(s => s.section === currentUser.section);
+        const upcomingSessions = sessions.filter(s => new Date(s.date) > new Date());
+        document.getElementById('upcomingSessionCount').textContent = upcomingSessions.length;
+
+        // Load recordings count
+        const recordings = JSON.parse(localStorage.getItem('recordings') || '[]')
+            .filter(r => r.section === currentUser.section);
+        document.getElementById('recordingCount').textContent = recordings.length;
+
+        // Load upcoming exams count
+        const exams = JSON.parse(localStorage.getItem('exams') || '[]')
+            .filter(e => e.section === currentUser.section);
+        const upcomingExams = exams.filter(e => new Date(e.date) > new Date());
+        document.getElementById('upcomingExamCount').textContent = upcomingExams.length;
+
+        // Load upcoming events
+        loadUpcomingEvents();
+    } catch (error) {
+        console.error('Error loading overview:', error);
+        document.getElementById('resourceCount').textContent = '0';
+        document.getElementById('upcomingSessionCount').textContent = '0';
+        document.getElementById('recordingCount').textContent = '0';
+        document.getElementById('upcomingExamCount').textContent = '0';
+        document.getElementById('upcomingEventsList').innerHTML = '<p class="no-data">Error loading events</p>';
+    }
+}
+
+// Load upcoming events
+function loadUpcomingEvents() {
+    try {
+        const sessions = JSON.parse(localStorage.getItem('sessions') || '[]')
+            .filter(s => s.section === currentUser.section);
+        const exams = JSON.parse(localStorage.getItem('exams') || '[]')
+            .filter(e => e.section === currentUser.section);
+        
+        const now = new Date();
+        const events = [
+            ...sessions.map(s => ({
+                ...s,
+                type: 'session',
+                date: new Date(s.date)
+            })),
+            ...exams.map(e => ({
+                ...e,
+                type: 'exam',
+                date: new Date(e.date)
+            }))
+        ].filter(e => e.date > now)
+         .sort((a, b) => a.date - b.date);
+
+        const upcomingEventsList = document.getElementById('upcomingEventsList');
+        upcomingEventsList.innerHTML = events.length ? events.map(event => `
+            <div class="event-card ${event.type}">
+                <div class="event-icon">
+                    <i class="fas fa-${event.type === 'session' ? 'chalkboard-teacher' : 'file-alt'}"></i>
+                </div>
+                <div class="event-info">
+                    <h4>${event.title}</h4>
+                    <p>${event.subject}</p>
+                    <p class="event-date">${formatDateTime(event.date)}</p>
+                </div>
+            </div>
+        `).join('') : '<p class="no-data">No upcoming events</p>';
+    } catch (error) {
+        console.error('Error loading upcoming events:', error);
+        document.getElementById('upcomingEventsList').innerHTML = '<p class="no-data">Error loading events</p>';
+    }
+}
 
 // Load and display resources
 function loadResources() {
-    const resourcesGrid = document.getElementById('resourcesGrid');
-    // Get resources from localStorage (replace with actual API call)
-    const resources = JSON.parse(localStorage.getItem('resources') || '[]')
-        .filter(r => r.section === currentUser.section);
+    try {
+        const resources = JSON.parse(localStorage.getItem('resources') || '[]')
+            .filter(r => r.section === currentUser.section);
 
-    if (resources.length === 0) {
-        resourcesGrid.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-book-open fa-3x"></i>
-                <p>No resources available yet</p>
-            </div>
+        // Update subject filter
+        const subjects = [...new Set(resources.map(r => r.subject))];
+        const resourceSubject = document.getElementById('resourceSubject');
+        resourceSubject.innerHTML = `
+            <option value="">All Subjects</option>
+            ${subjects.map(subject => `
+                <option value="${subject}">${subject}</option>
+            `).join('')}
         `;
-        return;
-    }
 
-    resourcesGrid.innerHTML = resources.map(resource => `
-        <div class="card resource-card">
-            <div class="card-header">
-                <span class="badge badge-${resource.subject}">${resource.subject}</span>
-                <h3>${resource.title}</h3>
+        displayResources(resources);
+    } catch (error) {
+        console.error('Error loading resources:', error);
+        document.getElementById('resourcesList').innerHTML = '<p class="no-data">Error loading resources</p>';
+    }
+}
+
+// Display resources
+function displayResources(resources) {
+    try {
+        const resourcesList = document.getElementById('resourcesList');
+        resourcesList.innerHTML = resources.length ? resources.map(resource => `
+            <div class="resource-card">
+                <div class="resource-icon">
+                    <i class="fas fa-${getResourceIcon(resource.type)}"></i>
+                </div>
+                <div class="resource-info">
+                    <h4>${resource.title}</h4>
+                    <p>${resource.subject}</p>
+                    <p class="resource-description">${resource.description}</p>
+                    <a href="${resource.link}" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt"></i> View Resource
+                    </a>
+                </div>
             </div>
-            <p>${resource.description}</p>
-            <div class="card-footer">
-                <span class="text-muted">Shared by ${resource.sharedBy}</span>
-                <a href="${resource.link}" class="btn btn-primary btn-sm" target="_blank">
-                    <i class="fas fa-external-link-alt"></i> View
-                </a>
-            </div>
-        </div>
-    `).join('');
+        `).join('') : '<p class="no-data">No resources available</p>';
+    } catch (error) {
+        console.error('Error displaying resources:', error);
+        document.getElementById('resourcesList').innerHTML = '<p class="no-data">Error displaying resources</p>';
+    }
+}
+
+// Get resource icon
+function getResourceIcon(type) {
+    const icons = {
+        'pdf': 'file-pdf',
+        'doc': 'file-word',
+        'ppt': 'file-powerpoint',
+        'video': 'video',
+        'link': 'link'
+    };
+    return icons[type] || 'file';
 }
 
 // Load and display study sessions
 function loadSessions() {
-    const sessionsList = document.getElementById('sessionsList');
-    // Get sessions from localStorage (replace with actual API call)
-    const sessions = JSON.parse(localStorage.getItem('sessions') || '[]')
-        .filter(s => s.section === currentUser.section);
+    try {
+        const sessions = JSON.parse(localStorage.getItem('sessions') || '[]')
+            .filter(s => s.section === currentUser.section);
 
-    if (sessions.length === 0) {
-        sessionsList.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-calendar-times fa-3x"></i>
-                <p>No upcoming sessions</p>
-            </div>
+        // Update subject filter
+        const subjects = [...new Set(sessions.map(s => s.subject))];
+        const sessionSubject = document.getElementById('sessionSubject');
+        sessionSubject.innerHTML = `
+            <option value="">All Subjects</option>
+            ${subjects.map(subject => `
+                <option value="${subject}">${subject}</option>
+            `).join('')}
         `;
-        return;
-    }
 
-    sessionsList.innerHTML = sessions.map(session => `
-        <div class="card session-card">
-            <div class="card-header">
-                <span class="badge badge-${session.subject}">${session.subject}</span>
-                <h3>${session.topic}</h3>
-            </div>
-            <div class="session-details">
-                <p><i class="fas fa-clock"></i> ${formatDateTime(session.date)}</p>
-                <p><i class="fas fa-user"></i> Hosted by ${session.host}</p>
-                ${session.notes ? `<p><i class="fas fa-sticky-note"></i> ${session.notes}</p>` : ''}
-            </div>
-            ${session.zoomLink ? `
-                <div class="session-actions">
-                    <a href="${session.zoomLink}" class="btn btn-primary" target="_blank">
+        displaySessions(sessions);
+    } catch (error) {
+        console.error('Error loading sessions:', error);
+        document.getElementById('sessionsList').innerHTML = '<p class="no-data">Error loading sessions</p>';
+    }
+}
+
+// Display sessions
+function displaySessions(sessions) {
+    try {
+        const sessionsList = document.getElementById('sessionsList');
+        sessionsList.innerHTML = sessions.length ? sessions.map(session => `
+            <div class="session-card">
+                <div class="session-info">
+                    <h4>${session.title}</h4>
+                    <p>${session.subject}</p>
+                    <p class="session-date">${formatDateTime(session.date)}</p>
+                    <p class="session-description">${session.description}</p>
+                    <a href="${session.link}" target="_blank" class="btn btn-primary">
                         <i class="fas fa-video"></i> Join Session
                     </a>
                 </div>
-            ` : ''}
-        </div>
-    `).join('');
+            </div>
+        `).join('') : '<p class="no-data">No sessions available</p>';
+    } catch (error) {
+        console.error('Error displaying sessions:', error);
+        document.getElementById('sessionsList').innerHTML = '<p class="no-data">Error displaying sessions</p>';
+    }
 }
 
 // Load and display recordings
 function loadRecordings() {
-    const recordingsGrid = document.getElementById('recordingsGrid');
-    // Get recordings from localStorage (replace with actual API call)
-    const recordings = JSON.parse(localStorage.getItem('recordings') || '[]')
-        .filter(r => r.section === currentUser.section);
+    try {
+        const recordings = JSON.parse(localStorage.getItem('recordings') || '[]')
+            .filter(r => r.section === currentUser.section);
 
-    if (recordings.length === 0) {
-        recordingsGrid.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-video-slash fa-3x"></i>
-                <p>No recordings available</p>
-            </div>
+        // Update subject filter
+        const subjects = [...new Set(recordings.map(r => r.subject))];
+        const recordingSubject = document.getElementById('recordingSubject');
+        recordingSubject.innerHTML = `
+            <option value="">All Subjects</option>
+            ${subjects.map(subject => `
+                <option value="${subject}">${subject}</option>
+            `).join('')}
         `;
-        return;
-    }
 
-    recordingsGrid.innerHTML = recordings.map(recording => `
-        <div class="card recording-card">
-            <div class="card-header">
-                <span class="badge badge-${recording.subject}">${recording.subject}</span>
-                <h3>${recording.title}</h3>
+        displayRecordings(recordings);
+    } catch (error) {
+        console.error('Error loading recordings:', error);
+        document.getElementById('recordingsList').innerHTML = '<p class="no-data">Error loading recordings</p>';
+    }
+}
+
+// Display recordings
+function displayRecordings(recordings) {
+    try {
+        const recordingsList = document.getElementById('recordingsList');
+        recordingsList.innerHTML = recordings.length ? recordings.map(recording => `
+            <div class="recording-card">
+                <div class="recording-info">
+                    <h4>${recording.title}</h4>
+                    <p>${recording.subject}</p>
+                    <p class="recording-date">${formatDateTime(recording.date)}</p>
+                    <p class="recording-description">${recording.description}</p>
+                    <a href="${recording.link}" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Watch Recording
+                    </a>
+                </div>
             </div>
-            <div class="video-container">
-                <iframe src="${getEmbedUrl(recording.youtubeUrl)}" frameborder="0" allowfullscreen></iframe>
-            </div>
-            <p>${recording.description}</p>
-            <div class="card-footer">
-                <span class="text-muted">Recorded by ${recording.recordedBy}</span>
-                <span class="text-muted">${formatDate(recording.date)}</span>
-            </div>
-        </div>
-    `).join('');
+        `).join('') : '<p class="no-data">No recordings available</p>';
+    } catch (error) {
+        console.error('Error displaying recordings:', error);
+        document.getElementById('recordingsList').innerHTML = '<p class="no-data">Error displaying recordings</p>';
+    }
 }
 
 // Load and display exams
 function loadExams() {
-    const examsList = document.getElementById('examsList');
-    // Get exams from localStorage (replace with actual API call)
-    const exams = JSON.parse(localStorage.getItem('exams') || '[]')
-        .filter(e => e.section === currentUser.section);
+    try {
+        const exams = JSON.parse(localStorage.getItem('exams') || '[]')
+            .filter(e => e.section === currentUser.section);
 
-    if (exams.length === 0) {
-        examsList.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-clipboard-question fa-3x"></i>
-                <p>No upcoming exams</p>
-            </div>
+        // Update subject filter
+        const subjects = [...new Set(exams.map(e => e.subject))];
+        const examSubject = document.getElementById('examSubject');
+        examSubject.innerHTML = `
+            <option value="">All Subjects</option>
+            ${subjects.map(subject => `
+                <option value="${subject}">${subject}</option>
+            `).join('')}
         `;
-        return;
+
+        displayExams(exams);
+    } catch (error) {
+        console.error('Error loading exams:', error);
+        document.getElementById('examsList').innerHTML = '<p class="no-data">Error loading exams</p>';
     }
+}
 
-    examsList.innerHTML = exams.map(exam => `
-        <div class="card exam-card">
-            <div class="card-header">
-                <span class="badge badge-${exam.type}">${exam.type}</span>
-                <h3>${exam.title}</h3>
-            </div>
-            <div class="exam-details">
-                <p><i class="fas fa-book"></i> ${exam.subject}</p>
-                <p><i class="fas fa-clock"></i> ${formatDateTime(exam.date)}</p>
-                ${exam.duration ? `<p><i class="fas fa-hourglass-half"></i> ${exam.duration}</p>` : ''}
-                ${exam.location ? `<p><i class="fas fa-map-marker-alt"></i> ${exam.location}</p>` : ''}
-            </div>
-            <div class="exam-timer" id="exam-timer-${exam.id}">
-                ${getCountdownText(exam.date)}
-            </div>
-            ${exam.notes ? `
-                <div class="exam-notes">
-                    <h4>Notes:</h4>
-                    <p>${exam.notes}</p>
+// Display exams
+function displayExams(exams) {
+    try {
+        const examsList = document.getElementById('examsList');
+        examsList.innerHTML = exams.length ? exams.map(exam => `
+            <div class="exam-card">
+                <div class="exam-info">
+                    <h4>${exam.title}</h4>
+                    <p>${exam.subject}</p>
+                    <p class="exam-date">${formatDateTime(exam.date)}</p>
+                    <p class="exam-description">${exam.description}</p>
+                    <a href="${exam.link}" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-file-alt"></i> View Exam
+                    </a>
                 </div>
-            ` : ''}
-        </div>
-    `).join('');
-
-    // Start countdown timers
-    exams.forEach(exam => {
-        startCountdownTimer(`exam-timer-${exam.id}`, exam.date);
-    });
+            </div>
+        `).join('') : '<p class="no-data">No exams available</p>';
+    } catch (error) {
+        console.error('Error displaying exams:', error);
+        document.getElementById('examsList').innerHTML = '<p class="no-data">Error displaying exams</p>';
+    }
 }
 
 // Load and display announcements
 function loadAnnouncements() {
-    const announcementsList = document.getElementById('announcementsList');
-    // Get announcements from localStorage (replace with actual API call)
-    const announcements = JSON.parse(localStorage.getItem('announcements') || '[]')
-        .filter(a => a.section === currentUser.section);
-
-    if (announcements.length === 0) {
-        announcementsList.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-bullhorn fa-3x"></i>
-                <p>No announcements</p>
+    try {
+        const announcements = JSON.parse(localStorage.getItem('announcements') || '[]')
+            .filter(a => a.section === currentUser.section);
+        
+        const announcementsList = document.getElementById('announcementsList');
+        announcementsList.innerHTML = announcements.length ? announcements.map(announcement => `
+            <div class="announcement-card">
+                <div class="announcement-info">
+                    <h4>${announcement.title}</h4>
+                    <p class="announcement-date">${formatDateTime(announcement.date)}</p>
+                    <p class="announcement-content">${announcement.content}</p>
+                </div>
             </div>
-        `;
-        return;
+        `).join('') : '<p class="no-data">No announcements available</p>';
+    } catch (error) {
+        console.error('Error loading announcements:', error);
+        document.getElementById('announcementsList').innerHTML = '<p class="no-data">Error loading announcements</p>';
     }
-
-    announcementsList.innerHTML = announcements.map(announcement => `
-        <div class="card announcement-card">
-            <div class="card-header">
-                <h3>${announcement.title}</h3>
-                <span class="text-muted">${formatDateTime(announcement.date)}</span>
-            </div>
-            <p>${announcement.content}</p>
-            <div class="card-footer">
-                <span class="text-muted">Posted by ${announcement.postedBy}</span>
-            </div>
-        </div>
-    `).join('');
 }
 
 // Setup filter functionality
 function setupFilters() {
-    // Resource filters
-    const resourceSubject = document.getElementById('resourceSubject');
-    const resourceSearch = document.getElementById('resourceSearch');
+    try {
+        // Resource filters
+        const resourceSubject = document.getElementById('resourceSubject');
+        const resourceSearch = document.getElementById('resourceSearch');
 
-    resourceSubject.addEventListener('change', filterResources);
-    resourceSearch.addEventListener('input', filterResources);
+        resourceSubject.addEventListener('change', filterResources);
+        resourceSearch.addEventListener('input', filterResources);
 
-    // Session filters
-    const sessionSubject = document.getElementById('sessionSubject');
-    sessionSubject.addEventListener('change', filterSessions);
+        // Session filters
+        const sessionSubject = document.getElementById('sessionSubject');
+        sessionSubject.addEventListener('change', filterSessions);
 
-    // Recording filters
-    const recordingSubject = document.getElementById('recordingSubject');
-    const recordingSearch = document.getElementById('recordingSearch');
+        // Recording filters
+        const recordingSubject = document.getElementById('recordingSubject');
+        const recordingSearch = document.getElementById('recordingSearch');
+        recordingSubject.addEventListener('change', filterRecordings);
+        recordingSearch.addEventListener('input', filterRecordings);
 
-    recordingSubject.addEventListener('change', filterRecordings);
-    recordingSearch.addEventListener('input', filterRecordings);
-
-    // Exam filters
-    const examSubject = document.getElementById('examSubject');
-    examSubject.addEventListener('change', filterExams);
+        // Exam filters
+        const examSubject = document.getElementById('examSubject');
+        examSubject.addEventListener('change', filterExams);
+    } catch (error) {
+        console.error('Error setting up filters:', error);
+    }
 }
 
-// Filter functions
+// Filter resources
 function filterResources() {
-    const subject = document.getElementById('resourceSubject').value;
-    const search = document.getElementById('resourceSearch').value.toLowerCase();
-    
-    const resources = document.querySelectorAll('.resource-card');
-    resources.forEach(resource => {
-        const resourceSubject = resource.querySelector('.badge').textContent.toLowerCase();
-        const resourceTitle = resource.querySelector('h3').textContent.toLowerCase();
-        const resourceDesc = resource.querySelector('p').textContent.toLowerCase();
-
-        const subjectMatch = subject === 'all' || resourceSubject === subject;
-        const searchMatch = !search || 
-            resourceTitle.includes(search) || 
-            resourceDesc.includes(search);
-
-        resource.style.display = subjectMatch && searchMatch ? 'block' : 'none';
-    });
+    try {
+        const resources = JSON.parse(localStorage.getItem('resources') || '[]')
+            .filter(r => r.section === currentUser.section);
+        
+        const subject = document.getElementById('resourceSubject').value;
+        const search = document.getElementById('resourceSearch').value.toLowerCase();
+        
+        const filtered = resources.filter(r => 
+            (!subject || r.subject === subject) &&
+            (!search || 
+                r.title.toLowerCase().includes(search) ||
+                r.description.toLowerCase().includes(search))
+        );
+        
+        displayResources(filtered);
+    } catch (error) {
+        console.error('Error filtering resources:', error);
+        document.getElementById('resourcesList').innerHTML = '<p class="no-data">Error filtering resources</p>';
+    }
 }
 
+// Filter sessions
 function filterSessions() {
-    const subject = document.getElementById('sessionSubject').value;
-    
-    const sessions = document.querySelectorAll('.session-card');
-    sessions.forEach(session => {
-        const sessionSubject = session.querySelector('.badge').textContent.toLowerCase();
-        session.style.display = subject === 'all' || sessionSubject === subject ? 'block' : 'none';
-    });
+    try {
+        const sessions = JSON.parse(localStorage.getItem('sessions') || '[]')
+            .filter(s => s.section === currentUser.section);
+        
+        const subject = document.getElementById('sessionSubject').value;
+        
+        const filtered = sessions.filter(s => 
+            !subject || s.subject === subject
+        );
+        
+        displaySessions(filtered);
+    } catch (error) {
+        console.error('Error filtering sessions:', error);
+        document.getElementById('sessionsList').innerHTML = '<p class="no-data">Error filtering sessions</p>';
+    }
 }
 
+// Filter recordings
 function filterRecordings() {
-    const subject = document.getElementById('recordingSubject').value;
-    const search = document.getElementById('recordingSearch').value.toLowerCase();
-    
-    const recordings = document.querySelectorAll('.recording-card');
-    recordings.forEach(recording => {
-        const recordingSubject = recording.querySelector('.badge').textContent.toLowerCase();
-        const recordingTitle = recording.querySelector('h3').textContent.toLowerCase();
-        const recordingDesc = recording.querySelector('p').textContent.toLowerCase();
-
-        const subjectMatch = subject === 'all' || recordingSubject === subject;
-        const searchMatch = !search || 
-            recordingTitle.includes(search) || 
-            recordingDesc.includes(search);
-
-        recording.style.display = subjectMatch && searchMatch ? 'block' : 'none';
-    });
+    try {
+        const recordings = JSON.parse(localStorage.getItem('recordings') || '[]')
+            .filter(r => r.section === currentUser.section);
+        
+        const subject = document.getElementById('recordingSubject').value;
+        const search = document.getElementById('recordingSearch').value.toLowerCase();
+        
+        const filtered = recordings.filter(r => 
+            (!subject || r.subject === subject) &&
+            (!search || 
+                r.title.toLowerCase().includes(search) ||
+                r.description.toLowerCase().includes(search))
+        );
+        
+        displayRecordings(filtered);
+    } catch (error) {
+        console.error('Error filtering recordings:', error);
+        document.getElementById('recordingsList').innerHTML = '<p class="no-data">Error filtering recordings</p>';
+    }
 }
 
+// Filter exams
 function filterExams() {
-    const subject = document.getElementById('examSubject').value;
-    
-    const exams = document.querySelectorAll('.exam-card');
-    exams.forEach(exam => {
-        const examSubject = exam.querySelector('.badge').textContent.toLowerCase();
-        exam.style.display = subject === 'all' || examSubject === subject ? 'block' : 'none';
-    });
+    try {
+        const exams = JSON.parse(localStorage.getItem('exams') || '[]')
+            .filter(e => e.section === currentUser.section);
+        
+        const subject = document.getElementById('examSubject').value;
+        
+        const filtered = exams.filter(e => 
+            !subject || e.subject === subject
+        );
+        
+        displayExams(filtered);
+    } catch (error) {
+        console.error('Error filtering exams:', error);
+        document.getElementById('examsList').innerHTML = '<p class="no-data">Error filtering exams</p>';
+    }
 }
 
-// Utility functions
+// Format date and time
 function formatDateTime(date) {
     return new Date(date).toLocaleString();
 }
 
+// Format date only
 function formatDate(date) {
     return new Date(date).toLocaleDateString();
-}
-
-function getEmbedUrl(youtubeUrl) {
-    const videoId = youtubeUrl.split('v=')[1];
-    return `https://www.youtube.com/embed/${videoId}`;
-}
-
-function getCountdownText(date) {
-    const now = new Date();
-    const examDate = new Date(date);
-    const diff = examDate - now;
-    
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    
-    return `${days}d ${hours}h ${minutes}m until exam`;
-}
-
-function startCountdownTimer(elementId, targetDate) {
-    const timerElement = document.getElementById(elementId);
-    if (!timerElement) return;
-
-    function updateTimer() {
-        const now = new Date();
-        const target = new Date(targetDate);
-        const diff = target - now;
-
-        if (diff <= 0) {
-            timerElement.innerHTML = 'Exam has started!';
-            timerElement.classList.add('expired');
-            return;
-        }
-
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s until exam`;
-    }
-
-    updateTimer();
-    setInterval(updateTimer, 1000);
 } 
