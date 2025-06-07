@@ -61,6 +61,79 @@ function showError(message) {
     setTimeout(() => errorDiv.remove(), 5000);
 }
 
+// Validate DIU email format
+function isValidDIUEmail(email) {
+    const diuEmailRegex = /^252-\d{2}-\d{3,4}@diu\.edu\.bd$/;
+    return diuEmailRegex.test(email);
+}
+
+// Extract student ID from email
+function extractStudentIdFromEmail(email) {
+    const match = email.match(/^252-\d{2}-\d{3,4}/);
+    return match ? match[0] : null;
+}
+
+// Validate registration form
+function validateRegistrationForm(form) {
+    const errors = [];
+    const email = form.email.value.trim();
+    const studentId = form.studentId.value.trim();
+    const fullName = form.fullName.value.trim();
+    const role = form.role.value;
+    const section = form.section.value;
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
+
+    // Validate email format
+    if (!isValidDIUEmail(email)) {
+        errors.push('Email must be in the format: 252-xx-xxx/252-xx-xxxx@diu.edu.bd');
+    }
+
+    // Validate student ID matches email
+    const emailStudentId = extractStudentIdFromEmail(email);
+    if (emailStudentId && emailStudentId !== studentId) {
+        errors.push('Student ID must match the ID in your email address');
+    }
+
+    // Validate full name
+    if (fullName.length < 3) {
+        errors.push('Full name must be at least 3 characters long');
+    }
+
+    // Validate role
+    if (!role) {
+        errors.push('Please select a role');
+    }
+
+    // Validate section
+    if (!section) {
+        errors.push('Please select a section');
+    }
+
+    // Validate password
+    if (password.length < 8) {
+        errors.push('Password must be at least 8 characters long');
+    }
+
+    // Validate password confirmation
+    if (password !== confirmPassword) {
+        errors.push('Passwords do not match');
+    }
+
+    return errors;
+}
+
+// Show validation errors
+function showValidationErrors(errors) {
+    errors.forEach(error => showError(error));
+}
+
+// Clear validation errors
+function clearValidationErrors() {
+    const errorMessages = document.querySelectorAll('.error-message');
+    errorMessages.forEach(error => error.remove());
+}
+
 // Handle form submission
 async function handleSubmit(event) {
     event.preventDefault();
