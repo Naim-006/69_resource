@@ -22,7 +22,13 @@
                     <label for="email">DIU Email</label>
                     <div class="input-group">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" id="email" name="email" placeholder="Enter your DIU email" required>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               pattern="252-\d{2}-\d{3,4}@diu\.edu\.bd"
+                               placeholder="252-xx-xxx/252-xx-xxxx@diu.edu.bd" 
+                               title="Please enter a valid DIU email address (e.g., 252-xx-xxx@diu.edu.bd or 252-xx-xxxx@diu.edu.bd)"
+                               required>
                     </div>
                 </div>
 
