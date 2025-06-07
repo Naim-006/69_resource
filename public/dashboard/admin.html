@@ -6,6 +6,7 @@
     <title>Admin Dashboard - Study Group Platform</title>
     <link rel="stylesheet" href="../styles/main.css">
     <link rel="stylesheet" href="../styles/dashboard.css">
+    <link rel="stylesheet" href="../styles/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -133,7 +134,7 @@
                             <input type="text" id="userSearch" placeholder="Search users...">
                             <i class="fas fa-search"></i>
                         </div>
-                        <select id="userFilter">
+                        <select id="userFilter" class="role-filter">
                             <option value="all">All Roles</option>
                             <option value="student">Students</option>
                             <option value="cr">CRs</option>
@@ -144,8 +145,17 @@
                         </button>
                     </div>
                 </div>
-                <div class="users-list" id="usersList">
-                    <!-- Users will be loaded here -->
+                <div class="users-container">
+                    <div class="users-header">
+                        <div class="user-info">User Information</div>
+                        <div class="user-role">Role</div>
+                        <div class="user-section">Section</div>
+                        <div class="user-status">Status</div>
+                        <div class="user-actions">Actions</div>
+                    </div>
+                    <div class="users-list" id="usersList">
+                        <!-- Users will be loaded here -->
+                    </div>
                 </div>
             </section>
 
@@ -154,13 +164,19 @@
                 <div class="section-header">
                     <h2>Section Management</h2>
                     <div class="section-actions">
+                        <div class="search-box">
+                            <input type="text" id="sectionSearch" placeholder="Search sections...">
+                            <i class="fas fa-search"></i>
+                        </div>
                         <button id="addSectionBtn" class="btn btn-primary">
                             <i class="fas fa-plus"></i> Add Section
                         </button>
                     </div>
                 </div>
-                <div class="sections-grid" id="sectionsList">
-                    <!-- Sections will be loaded here -->
+                <div class="sections-container">
+                    <div class="sections-grid" id="sectionsList">
+                        <!-- Sections will be loaded here -->
+                    </div>
                 </div>
             </section>
 
