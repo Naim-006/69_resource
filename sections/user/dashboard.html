@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - Study Resource</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../../styles/dashboard.css">
+  <link rel="stylesheet" href="css/user.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar container - sidebar.js will load content here -->
+    <div id="sidebar-container"></div>
+    
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Welcome, <span id="userName">Student</span></h1>
+        <span class="section-badge" id="userSection">Section 1</span>
+      </header>
+
+      <!-- Dashboard Overview -->
+      <section id="dashboard-overview" class="content-section active">
+        <div class="overview-cards">
+          <div class="card upcoming-sessions">
+            <h3 class="section-title">
+              <i class="fas fa-calendar-check"></i> Upcoming Sessions
+            </h3>
+            <div class="sessions-list" id="upcomingSessions">
+              <!-- Sessions will be loaded here -->
+              <p class="empty-state">No upcoming sessions</p>
+            </div>
+            <div class="card-footer">
+              <a href="sessions.html" class="btn btn-primary btn-sm">View All Sessions</a>
+            </div>
+          </div>
+
+          <div class="card latest-resources">
+            <h3 class="section-title">
+              <i class="fas fa-book"></i> Latest Resources
+            </h3>
+            <div class="resources-list" id="latestResources">
+              <!-- Resources will be loaded here -->
+              <p class="empty-state">No resources available</p>
+            </div>
+            <div class="card-footer">
+              <a href="resources.html" class="btn btn-primary btn-sm">View All Resources</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="section-title">
+            <i class="fas fa-bell"></i> Announcements
+          </h3>
+          <div class="announcements-list" id="recentAnnouncements">
+            <!-- Announcements will be loaded here -->
+            <p class="empty-state">No recent announcements</p>
+          </div>
+          <div class="card-footer">
+            <a href="announcements.html" class="btn btn-primary btn-sm">View All Announcements</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="section-title">
+            <i class="fas fa-clipboard-list"></i> Upcoming Exams
+          </h3>
+          <div class="exams-list" id="upcomingExams">
+            <!-- Exams will be loaded here -->
+            <p class="empty-state">No upcoming exams</p>
+          </div>
+          <div class="card-footer">
+            <a href="exams.html" class="btn btn-primary btn-sm">View All Exams</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Load sidebar.js first for sidebar functionality -->
+  <script src="js/sidebar.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html> 

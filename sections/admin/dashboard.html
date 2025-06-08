@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Study Resource</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+</head>
+<body>
+  <!-- Mobile Menu Toggle -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  
+  <div class="dashboard-container">
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+    
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Admin Dashboard</h1>
+        <div class="user-info">
+          <span id="adminName">Admin</span>
+          <i class="fas fa-user-shield"></i>
+        </div>
+      </header>
+
+      <!-- Dashboard Overview -->
+      <section id="dashboard-overview" class="content-section active">
+        <div class="overview-cards">
+          <div class="card">
+            <h3 class="section-title">
+              <i class="fas fa-users"></i> Users
+            </h3>
+            <div class="stat">
+              <span id="totalUsers">0</span>
+              <small>Total Users</small>
+            </div>
+            <div class="stat-details">
+              <div class="stat-item">
+                <span id="studentCount">0</span>
+                <small>Students</small>
+              </div>
+              <div class="stat-item">
+                <span id="crCount">0</span>
+                <small>CRs</small>
+              </div>
+            </div>
+            <div class="card-footer">
+              <a href="users.html" class="btn btn-primary btn-sm">Manage Users</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="section-title">
+              <i class="fas fa-book"></i> Resources
+            </h3>
+            <div class="stat">
+              <span id="totalResources">0</span>
+              <small>Total Resources</small>
+            </div>
+            <div class="stat-details">
+              <div class="stat-item">
+                <span id="pendingResources">0</span>
+                <small>Pending</small>
+              </div>
+              <div class="stat-item">
+                <span id="approvedResources">0</span>
+                <small>Approved</small>
+              </div>
+            </div>
+            <div class="card-footer">
+              <a href="resources.html" class="btn btn-primary btn-sm">Manage Resources</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="section-title">
+            <i class="fas fa-layer-group"></i> Sections
+          </h3>
+          <div class="sections-list" id="sectionsList">
+            <!-- Sections will be loaded here -->
+            <p class="empty-state">No sections available</p>
+          </div>
+          <div class="card-footer">
+            <a href="sections.html" class="btn btn-primary btn-sm">Manage Sections</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script src="js/admin-dashboard.js"></script>
+  <script src="js/auth-check.js"></script>
+</body>
+</html> 

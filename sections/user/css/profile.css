@@ -1,0 +1,420 @@
+/* Profile Page Styles */
+
+/* Profile Container */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Profile Card */
+.profile-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Profile Info */
+.profile-info {
+  padding: 15px 0;
+}
+
+.profile-loading {
+  text-align: center;
+  padding: 30px;
+  color: var(--gray-color);
+}
+
+.profile-loading i {
+  margin-right: 8px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--light-gray-color);
+  padding-bottom: 20px;
+  position: relative;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.info-label {
+  width: 180px;
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.info-value {
+  flex: 1;
+  color: var(--gray-color);
+  display: flex;
+  align-items: center;
+}
+
+.info-edit {
+  color: var(--primary-color);
+  cursor: pointer;
+  margin-left: 15px;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+
+.info-edit:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.info-edit-input {
+  flex: 1;
+  display: none;
+}
+
+.info-edit-input.active {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.info-edit-input input, 
+.info-edit-input select {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--light-gray-color);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.info-edit-input input:focus, 
+.info-edit-input select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+}
+
+.info-action {
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.info-action.save {
+  color: var(--success-color);
+}
+
+.info-action.cancel {
+  color: var(--danger-color);
+  margin-left: 10px;
+}
+
+.info-action:hover {
+  transform: scale(1.1);
+}
+
+.info-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.status-verified {
+  background-color: rgba(46, 204, 113, 0.15);
+  color: var(--success-color);
+}
+
+.status-pending {
+  background-color: rgba(243, 156, 18, 0.15);
+  color: var(--warning-color);
+}
+
+/* Password Change Form */
+.change-password-form-container {
+  padding: 20px 0;
+}
+
+.change-password-form {
+  max-width: 500px;
+  background-color: #f8f9fa;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.change-password-form .form-group {
+  margin-bottom: 20px;
+}
+
+.change-password-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-container input {
+  flex: 1;
+  padding: 12px 40px 12px 15px;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+.password-input-container input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+}
+
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  color: var(--gray-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.toggle-password:hover {
+  color: var(--dark-color);
+}
+
+.password-strength {
+  margin-top: 12px;
+}
+
+.strength-meter {
+  height: 6px;
+  background-color: var(--light-gray-color);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.strength-bar {
+  height: 100%;
+  width: 0;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.strength-weak {
+  width: 33%;
+  background-color: var(--danger-color);
+}
+
+.strength-medium {
+  width: 66%;
+  background-color: var(--warning-color);
+}
+
+.strength-strong {
+  width: 100%;
+  background-color: var(--success-color);
+}
+
+#strengthText {
+  font-size: 13px;
+  color: var(--gray-color);
+  display: block;
+  margin-top: 5px;
+}
+
+.match-text {
+  font-size: 13px;
+  margin-top: 5px;
+  display: block;
+}
+
+.match-text.match {
+  color: var(--success-color);
+}
+
+.match-text.not-match {
+  color: var(--danger-color);
+}
+
+.form-actions {
+  margin-top: 25px;
+}
+
+.form-actions button {
+  padding: 12px 25px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.form-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Text */
+.form-text {
+  display: block;
+  font-size: 12px;
+  color: var(--gray-color);
+  margin-top: 5px;
+}
+
+/* Error Message */
+.error-message-text {
+  font-size: 12px;
+  color: var(--danger-color);
+  margin-top: 5px;
+  display: none;
+}
+
+.input-error {
+  border-color: var(--danger-color) !important;
+}
+
+.input-error + .error-message-text {
+  display: block;
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: modalOpen 0.3s ease;
+}
+
+@keyframes modalOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--light-gray-color);
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--dark-color);
+}
+
+.modal-header h3 i {
+  margin-right: 10px;
+  color: var(--primary-color);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--gray-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  color: var(--danger-color);
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .info-row {
+    flex-direction: column;
+  }
+  
+  .info-label {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .change-password-form {
+    width: 100%;
+  }
+}
+
+/* Add styles for locked fields (CR users) */
+.locked-field-note {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 0.8rem;
+  color: #888;
+  background-color: #f8f8f8;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+}
+
+.locked-field-note i {
+  margin-right: 3px;
+  color: #f39c12;
+}
+
+/* CR restriction note at the top of profile */
+.cr-restriction-note {
+  background-color: #fff9e6;
+  border: 1px solid #f5e0b3;
+  border-left: 4px solid #f39c12;
+  color: #7a5810;
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.cr-restriction-note i {
+  margin-right: 6px;
+  color: #f39c12;
+} 

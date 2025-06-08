@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email - Study Resource</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <style>
+        .verification-status {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .verification-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .verification-icon.success {
+            color: var(--success-color);
+        }
+        
+        .verification-icon.error {
+            color: var(--danger-color);
+        }
+        
+        .verification-icon.loading {
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+        
+        .verification-message {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .verification-details {
+            color: var(--gray-color);
+            margin-bottom: 30px;
+        }
+        
+        #loginBtn {
+            display: none;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        #loginBtn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1><i class="fas fa-envelope-open-text"></i> Email Verification</h1>
+                <p>Verifying your email address</p>
+            </div>
+
+            <div class="verification-status">
+                <i id="verificationIcon" class="fas fa-spinner verification-icon loading"></i>
+                <h2 id="verificationMessage" class="verification-message">Verifying your email...</h2>
+                <p id="verificationDetails" class="verification-details">Please wait while we verify your email address</p>
+            </div>
+
+            <div class="auth-footer">
+                <a href="login.html" class="btn btn-primary" id="loginBtn">
+                    Go to Login
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification container -->
+    <div id="notification-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/verify-email.js"></script>
+</body>
+</html> 

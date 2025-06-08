@@ -1,0 +1,161 @@
+/* User Sidebar Styles */
+
+/* Sidebar Layout */
+.sidebar {
+  width: 280px;
+  background-color: var(--secondary-color);
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.sidebar-header .menu-toggle {
+  cursor: pointer;
+  font-size: 1.4rem;
+  display: none;
+}
+
+.sidebar-nav {
+  padding: 20px 0;
+  overflow-y: auto;
+  max-height: calc(100vh - 140px);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.nav-item.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.nav-item i {
+  margin-right: 10px;
+  width: 20px;
+  text-align: center;
+}
+
+.notification-badge {
+  position: absolute;
+  right: 15px;
+  background-color: var(--accent-color);
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile Responsiveness for Sidebar */
+@media (max-width: 992px) {
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    height: 100%;
+    transition: left 0.3s ease;
+    width: 280px;
+  }
+
+  .sidebar.expanded {
+    left: 0;
+  }
+
+  .sidebar-header .menu-toggle {
+    display: block;
+  }
+  
+  /* Create a mobile menu toggle button that's always visible */
+  .mobile-menu-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background-color: var(--secondary-color);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Add padding to main content to accommodate the menu toggle */
+  .main-content {
+    padding-left: 45px;
+  }
+}
+
+/* Close button for mobile view */
+.sidebar-close {
+  display: none;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .sidebar.expanded .sidebar-close {
+    display: block;
+  }
+  
+  /* Overlay when sidebar is expanded */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  
+  .sidebar-overlay.active {
+    display: block;
+  }
+  
+  /* Adjust padding for smaller screens */
+  .main-content {
+    padding: 15px;
+  }
+} 

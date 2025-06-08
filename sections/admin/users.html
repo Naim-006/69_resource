@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management - Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/users.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+</head>
+<body>
+  <!-- Mobile Menu Toggle -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  
+  <div class="dashboard-container">
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+    
+    <main class="main-content">
+      <header class="content-header">
+        <h1>User Management</h1>
+        <div class="user-info">
+          <span id="adminName">Admin</span>
+          <i class="fas fa-user-shield"></i>
+        </div>
+      </header>
+
+      <section class="content-section active">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="section-title">
+              <i class="fas fa-users"></i> All Users
+            </h3>
+            <div class="card-actions">
+              <div class="search-container">
+                <input type="text" id="userSearch" placeholder="Search users...">
+                <i class="fas fa-search"></i>
+              </div>
+              <select id="roleFilter">
+                <option value="all">All Roles</option>
+                <option value="student">Students</option>
+                <option value="cr">Class Representatives</option>
+                <option value="admin">Admins</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Info</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Joined</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <!-- Users will be loaded here -->
+                <tr>
+                  <td colspan="7" class="loading-cell">
+                    <div class="loading-spinner">
+                      <i class="fas fa-spinner fa-spin"></i>
+                      <span>Loading users...</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="pagination">
+            <button id="prevPage" class="btn btn-sm" disabled>
+              <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <span id="pageInfo">Page 1 of 1</span>
+            <button id="nextPage" class="btn btn-sm" disabled>
+              Next <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- User Details Modal -->
+  <div class="modal" id="userModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>User Details</h3>
+        <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body" id="userDetails">
+        <!-- User details will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script src="js/users.js"></script>
+  <script src="js/auth-check.js"></script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - Study Resource</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/user.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/profile.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar container - sidebar.js will load content here -->
+    <div id="sidebar-container"></div>
+    
+    <main class="main-content">
+      <header class="content-header">
+        <h1>My Profile</h1>
+        <span class="section-badge" id="userSection">Section 1</span>
+      </header>
+
+      <!-- Profile Section -->
+      <section id="profile-section" class="content-section active">
+        <div class="profile-container">
+          <!-- Profile Info Card -->
+          <div class="card profile-card">
+            <div class="card-header">
+              <h3 class="section-title">
+                <i class="fas fa-user-circle"></i> Profile Information
+              </h3>
+            </div>
+            
+            <div class="profile-info" id="profileInfo">
+              <!-- Profile info will be loaded here -->
+              <div class="profile-loading">
+                <i class="fas fa-spinner fa-spin"></i> Loading profile...
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Settings Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="section-title">
+                <i class="fas fa-lock"></i> Account Security
+              </h3>
+            </div>
+            
+            <div class="change-password-form-container">
+              <form id="changePasswordForm" class="change-password-form">
+                <div class="form-group">
+                  <label for="currentPassword">Current Password</label>
+                  <div class="password-input-container">
+                    <input type="password" id="currentPassword" required>
+                    <i class="fas fa-eye toggle-password" data-target="currentPassword"></i>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="newPassword">New Password</label>
+                  <div class="password-input-container">
+                    <input type="password" id="newPassword" required>
+                    <i class="fas fa-eye toggle-password" data-target="newPassword"></i>
+                  </div>
+                  <div class="password-strength" id="passwordStrength">
+                    <div class="strength-meter">
+                      <div class="strength-bar" id="strengthBar"></div>
+                    </div>
+                    <span id="strengthText">Password strength</span>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="confirmPassword">Confirm New Password</label>
+                  <div class="password-input-container">
+                    <input type="password" id="confirmPassword" required>
+                    <i class="fas fa-eye toggle-password" data-target="confirmPassword"></i>
+                  </div>
+                  <span id="passwordMatch" class="match-text"></span>
+                </div>
+                
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Update Password</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Edit Profile Modal - Hidden but kept for compatibility -->
+  <div class="modal" id="editProfileModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-edit"></i> Edit Profile</h3>
+        <button class="close-btn" id="closeProfileModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="editProfileForm">
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" disabled>
+            <small class="form-text">Email address cannot be changed</small>
+          </div>
+          
+          <div class="form-group">
+            <label for="batch">Batch</label>
+            <input type="text" id="batch" name="batch" placeholder="e.g. 1, 69, 420..." maxlength="4">
+            <div class="error-message-text" id="batchError">Batch must be a number between 1-1000</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="section">Section</label>
+            <input type="text" id="section" name="section" placeholder="e.g. A, B, C..." maxlength="1">
+            <div class="error-message-text" id="sectionError">Section must be a single letter (A-Z)</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="semester">Semester</label>
+            <select id="semester" name="semester">
+              <option value="">Select Semester</option>
+              <!-- Semester options will be generated by JavaScript -->
+            </select>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelEditProfile">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load sidebar.js first for sidebar functionality -->
+  <script src="js/sidebar.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html> 

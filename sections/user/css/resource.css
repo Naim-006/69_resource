@@ -1,0 +1,427 @@
+/* Resource Page Specific Styles */
+
+/* Resource Form Styles */
+.resource-share-card {
+  margin-bottom: 24px;
+}
+
+.resource-share-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggle-form-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-form-btn:hover {
+  background: #2980b9;
+  transform: rotate(90deg);
+}
+
+.toggle-form-btn.active {
+  transform: rotate(45deg);
+}
+
+.resource-form-container {
+  padding-top: 20px;
+  border-top: 1px solid var(--light-gray-color);
+  margin-top: 20px;
+}
+
+.resource-form {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--dark-color);
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--light-gray-color);
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  border-color: #bdc3c7;
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-actions {
+  margin-top: 36px;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Resource Listing Styles */
+.resource-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.resource-filters {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  display: flex;
+  position: relative;
+  flex-grow: 1;
+}
+
+.search-box input {
+  padding: 12px 16px;
+  padding-right: 45px;
+  border: 2px solid var(--light-gray-color);
+  border-radius: var(--border-radius);
+  width: 100%;
+  min-width: 250px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.search-box input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.search-box button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 45px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--gray-color);
+  transition: all 0.3s ease;
+}
+
+.search-box button:hover {
+  color: var(--primary-color);
+}
+
+.form-control {
+  padding: 12px 16px;
+  border: 2px solid var(--light-gray-color);
+  border-radius: var(--border-radius);
+  font-size: 15px;
+  min-width: 180px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2395a5a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.resources-list {
+  margin-top: 24px;
+}
+
+.resource-item {
+  padding: 24px;
+  border-bottom: 1px solid var(--light-gray-color);
+  transition: all 0.3s ease;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  border-radius: var(--border-radius);
+}
+
+.resource-item:hover {
+  background-color: rgba(52, 152, 219, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.resource-item:last-child {
+  border-bottom: none;
+}
+
+.resource-icon {
+  color: var(--primary-color);
+  background-color: rgba(52, 152, 219, 0.1);
+  padding: 16px;
+  border-radius: var(--border-radius);
+  font-size: 24px;
+  min-width: 60px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(52, 152, 219, 0.1);
+}
+
+.resource-info {
+  flex: 1;
+}
+
+.resource-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--dark-color);
+  margin: 0 0 10px 0;
+}
+
+.resource-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.resource-subject {
+  display: inline-block;
+  padding: 5px 12px;
+  background-color: rgba(52, 152, 219, 0.1);
+  color: var(--primary-color);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.resource-date {
+  color: var(--gray-color);
+  font-size: 13px;
+}
+
+.resource-author {
+  color: var(--dark-color);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.resource-description {
+  color: var(--gray-color);
+  margin: 12px 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.resource-link {
+  margin-top: 15px;
+}
+
+.resource-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+.resource-link a:hover {
+  background-color: rgba(52, 152, 219, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Pagination Styles */
+.pagination-container {
+  margin-top: 36px;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: white;
+  padding: 10px 16px;
+  border-radius: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.pagination-btn {
+  background-color: var(--light-color);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--dark-color);
+}
+
+.pagination-btn:not(:disabled):hover {
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: var(--dark-color);
+  font-weight: 500;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  color: var(--gray-color);
+  padding: 40px 20px;
+  font-style: italic;
+  background-color: rgba(236, 240, 241, 0.3);
+  border-radius: var(--border-radius);
+}
+
+/* Mobile Responsiveness - Resource Specific */
+@media (max-width: 992px) {
+  .resource-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .resource-filters {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .search-box {
+    flex-grow: 1;
+  }
+  
+  .form-control {
+    flex-grow: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .resource-header {
+    margin-bottom: 20px;
+  }
+  
+  .resource-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .search-box, 
+  .search-box input,
+  .form-control {
+    width: 100%;
+  }
+  
+  .resource-item {
+    flex-direction: column;
+    padding: 20px;
+    gap: 16px;
+  }
+  
+  .resource-icon {
+    align-self: center;
+    margin-bottom: 12px;
+    padding: 20px;
+    font-size: 28px;
+    min-width: 70px;
+  }
+  
+  .resource-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 12px 14px;
+  }
+  
+  .form-actions {
+    margin-top: 24px;
+  }
+  
+  .pagination {
+    padding: 8px 12px;
+    border-radius: 24px;
+  }
+  
+  .pagination-btn {
+    width: 36px;
+    height: 36px;
+  }
+} 

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resource Management - Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/resources.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+</head>
+<body>
+  <!-- Mobile Menu Toggle -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  
+  <div class="dashboard-container">
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+    
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Resource Management</h1>
+        <div class="user-info">
+          <span id="adminName">Admin</span>
+          <i class="fas fa-user-shield"></i>
+        </div>
+      </header>
+
+      <section class="content-section active">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="section-title">
+              <i class="fas fa-book"></i> All Resources
+            </h3>
+            <div class="card-actions">
+              <div class="search-container">
+                <input type="text" id="resourceSearch" placeholder="Search resources...">
+                <i class="fas fa-search"></i>
+              </div>
+              <select id="statusFilter">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <select id="subjectFilter">
+                <option value="all">All Subjects</option>
+                <option value="computer">Computer Science</option>
+                <option value="math">Mathematics</option>
+                <option value="physics">Physics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="english">English</option>
+                <option value="accounting">Accounting</option>
+                <option value="statistic">Statistics</option>
+                <option value="others">Others</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="resources-container">
+            <div id="resourcesList" class="resources-list">
+              <!-- Resources will be loaded here -->
+              <div class="loading-state">
+                <div class="loading-spinner">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <span>Loading resources...</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pagination">
+              <button id="prevPage" class="btn btn-sm" disabled>
+                <i class="fas fa-chevron-left"></i> Previous
+              </button>
+              <span id="pageInfo">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+              <button id="nextPage" class="btn btn-sm" disabled>
+                Next <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Resource Details Modal -->
+  <div class="modal" id="resourceModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Resource Details</h3>
+        <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body" id="resourceDetails">
+        <!-- Resource details will be loaded here -->
+      </div>
+      <div class="modal-footer">
+        <button id="rejectBtn" class="btn btn-danger">
+          <i class="fas fa-times"></i> Reject
+        </button>
+        <button id="pendingBtn" class="btn btn-warning">
+          <i class="fas fa-clock"></i> Set Pending
+        </button>
+        <button id="approveBtn" class="btn btn-success">
+          <i class="fas fa-check"></i> Approve
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Resource Modal -->
+  <div class="modal" id="editResourceModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Resource</h3>
+        <button class="close-btn" id="closeEditModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="editResourceForm">
+          <div class="form-group">
+            <label for="editResourceTitle">Title</label>
+            <input type="text" id="editResourceTitle" required>
+          </div>
+          <div class="form-group">
+            <label for="editResourceLink">Link</label>
+            <input type="url" id="editResourceLink" required>
+          </div>
+          <div class="form-group">
+            <label for="editResourceDescription">Description</label>
+            <textarea id="editResourceDescription" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="editResourceSubject">Subject</label>
+            <select id="editResourceSubject" required>
+              <option value="computer">Computer Science</option>
+              <option value="math">Mathematics</option>
+              <option value="physics">Physics</option>
+              <option value="chemistry">Chemistry</option>
+              <option value="english">English</option>
+              <option value="accounting">Accounting</option>
+              <option value="statistic">Statistics</option>
+              <option value="others">Others</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editResourceStatus">Status</label>
+            <select id="editResourceStatus" required>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal" id="deleteModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirm Deletion</h3>
+        <button class="close-btn" id="closeDeleteModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this resource? This action cannot be undone.</p>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+          <button id="confirmDeleteBtn" class="btn btn-danger">Delete Resource</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script src="js/resources.js"></script>
+  <script src="js/auth-check.js"></script>
+</body>
+</html>
